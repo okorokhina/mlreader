@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 class SelectView extends StatefulWidget {
@@ -24,11 +25,13 @@ class SelectViewState extends State<SelectView> {
           builder: (context, snapshot) {
             if (snapshot.data != null) {
               return Container(
+                margin: EdgeInsets.only(left: 20, right: 20, bottom: 100),
                 decoration: BoxDecoration(
-                    image: DecorationImage(image: FileImage(snapshot.data))),
+                    image:
+                        DecorationImage(image: FileImage(File(snapshot.data)))),
               );
             } else {
-              return Text("Choise image");
+              return Center(child: CircularProgressIndicator());
             }
           },
         ),
