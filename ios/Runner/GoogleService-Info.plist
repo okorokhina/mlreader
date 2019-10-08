@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>559235148554-nudg35f6q1ts4nj31o3qdf2roepc85fh.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.559235148554-nudg35f6q1ts4nj31o3qdf2roepc85fh</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAgipaP-tdxI3VfCMa-CwypiTsN8iTy534</string>
+	<key>GCM_SENDER_ID</key>
+	<string>559235148554</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>ua.a5.mlreader</string>
+	<key>PROJECT_ID</key>
+	<string>ml-reader-d9abf</string>
+	<key>STORAGE_BUCKET</key>
+	<string>ml-reader-d9abf.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:559235148554:ios:1470273b3ce52ae0a468f3</string>
+	<key>DATABASE_URL</key>
+	<string>https://ml-reader-d9abf.firebaseio.com</string>
+</dict>
+</plist>
