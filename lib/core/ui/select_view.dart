@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:mlreader/core/blocs/language_bloc.dart';
 
 class SelectView extends StatefulWidget {
   SelectView({@required this.textRecognizedBloc});
@@ -13,6 +14,13 @@ class SelectView extends StatefulWidget {
 }
 
 class SelectViewState extends State<SelectView> {
+  LanguageBloc lang = LanguageBloc();
+  @override
+  void initState() {
+    lang.identifyLanguage("hello how are you?");
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
