@@ -35,7 +35,7 @@ class TextRecognizedBloc extends BlocBase {
     try {
       await _controller.takePicture(filePath);
       File image = await FlutterExifRotation.rotateImage(path: filePath);
-      photo.add(filePath);
+      photo.add(image.path);
       readText(File(image.path));
     } catch (e) {
       print(e);
@@ -57,11 +57,14 @@ class TextRecognizedBloc extends BlocBase {
     FirebaseVisionImage ourImage = FirebaseVisionImage.fromFile(filePath);
     TextRecognizer recognizerText = FirebaseVision.instance.textRecognizer();
     VisionText readText = await recognizerText.processImage(ourImage);
-
+    
     for (TextBlock block in readText.blocks) {
       for (TextLine line in block.lines) {
         for (TextElement word in line.elements) {
           print(word.text);
+          final List<RecognizedLanguage> languages = block.recognizedLanguages;
+          
+          print("languages languages languages====> $languages");
         }
       }
     }

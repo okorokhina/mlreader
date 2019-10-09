@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:camera/new/src/common/camera_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:mlreader/core/ui/scan_view.dart';
 
@@ -23,6 +21,9 @@ class SplashViewState extends State<SplashView>
   @override
   void initState() {
     startTimer();
+    controller = new AnimationController(
+        vsync: this, duration: new Duration(milliseconds: 700));
+    controller.forward();
     super.initState();
   }
 
@@ -39,12 +40,14 @@ class SplashViewState extends State<SplashView>
               height: 55,
               color: Theme.of(context).primaryColor,
             ),
-            Center(
-              child: Container(
-                margin: EdgeInsets.only(left: 50, right: 50, top: 242),
-                child: Image.asset("assets/a5.png"),
-              ),
-            ),
+            ScaleTransition(
+                scale: controller,
+                child: Center(
+                  child: Container(
+                    margin: EdgeInsets.only(left: 50, right: 50, top: 242),
+                    child: Image.asset("assets/a5.png"),
+                  ),
+                )),
             Container(
               padding: EdgeInsets.only(left: 15, right: 15),
               margin: EdgeInsets.only(left: 50, right: 50, top: 132),
@@ -67,7 +70,6 @@ class SplashViewState extends State<SplashView>
   }
 
   navigationPage() {
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => TextRecognized(cameras: widget.cameras)));
     Navigator.push(
         context,
         MaterialPageRoute(

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mlreader/core/blocs/bloc_provider.dart';
-import 'package:mlreader/core/blocs/bloc_text_recognized_android.dart';
+import 'package:mlreader/core/blocs/bloc_text_recognized.dart';
 import 'package:mlreader/core/ui/select_view.dart';
 import 'package:camera/camera.dart';
 
@@ -21,8 +21,7 @@ class TextRecognizedState extends State<TextRecognized> {
   bool isImageLoaded = false;
   CameraController _controller;
   bool select;
-  // final textRecognizedBloc = TextRecognizedBloc();
-  
+  final textRecognizedBloc = TextRecognizedBloc();
 
   @override
   void initState() {
@@ -44,8 +43,6 @@ class TextRecognizedState extends State<TextRecognized> {
 
   @override
   Widget build(BuildContext context) {
-    final TextRecognizedBloc textRecognizedBloc =
-        BlocProvider.of<TextRecognizedBloc>(context);
     textRecognizedBloc.scanColor.add(Colors.white);
     textRecognizedBloc.selectColor.add(null);
     return Scaffold(

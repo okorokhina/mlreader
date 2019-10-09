@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mlreader/core/blocs/bloc_provider.dart';
-import 'package:mlreader/core/blocs/bloc_text_recognized_android.dart';
-import 'package:mlreader/core/ui/scan_view.dart';
+import 'package:mlreader/core/blocs/bloc_text_recognized.dart';
 import 'package:camera/camera.dart';
 import 'package:mlreader/core/ui/splash_view.dart';
 
@@ -21,8 +20,6 @@ class MyApp extends StatelessWidget {
             appBarTheme: AppBarTheme(color: Color(0xFF00B33A)),
             primaryColor: Color(0xFF00B33A)),
         home: BlocProvider(
-            bloc: TextRecognizedBloc(),
-            child: TextRecognized(cameras: cameras)));
-            // home: SplashView(cameras: cameras));
+            bloc: TextRecognizedBloc(), child: SplashView(cameras: cameras)));
   }
 }
