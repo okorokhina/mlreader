@@ -5,9 +5,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
+import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 
 class TextRecognizedBloc extends BlocBase {
-  
   final detectedText = BehaviorSubject();
   final photo = BehaviorSubject();
   final scanColor = BehaviorSubject();
@@ -34,8 +34,9 @@ class TextRecognizedBloc extends BlocBase {
     }
     try {
       await _controller.takePicture(filePath);
+      File image = await FlutterExifRotation.rotateImage(path: filePath);
       photo.add(filePath);
-      readText(File(filePath));
+      readText(File(image.path));
     } catch (e) {
       print(e);
     }
@@ -43,9 +44,12 @@ class TextRecognizedBloc extends BlocBase {
 
   Future pickGallery() async {
     var tempStore = await ImagePicker.pickImage(source: ImageSource.gallery);
+    scanColor.add(null);
+    selectColor.add(Colors.white);
     if (tempStore != null) {
+      File image = await FlutterExifRotation.rotateImage(path: tempStore.path);
       photo.add(tempStore.path);
-      readText(tempStore);
+      readText(image);
     }
   }
 
