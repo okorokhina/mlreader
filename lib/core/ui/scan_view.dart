@@ -21,6 +21,8 @@ class TextRecognizedState extends State<TextRecognized> {
   bool isImageLoaded = false;
   CameraController _controller;
   bool select;
+  // final textRecognizedBloc = TextRecognizedBloc();
+  
 
   @override
   void initState() {
