@@ -44,13 +44,16 @@ class SplashViewState extends State<SplashView>
                 scale: controller,
                 child: Center(
                   child: Container(
-                    margin: EdgeInsets.only(left: 50, right: 50, top: 242),
+                    margin: EdgeInsets.only(
+                        left: 50,
+                        right: 50,
+                        top: MediaQuery.of(context).size.height / 3),
                     child: Image.asset("assets/a5.png"),
                   ),
                 )),
             Container(
               padding: EdgeInsets.only(left: 15, right: 15),
-              margin: EdgeInsets.only(left: 50, right: 50, top: 132),
+              margin: EdgeInsets.only(left: 50, right: 50, top: 140),
               child: Text(
                 "Application built with Flutter framework, translates image to text with OCR and reads it aloud.",
                 style: TextStyle(
@@ -70,7 +73,7 @@ class SplashViewState extends State<SplashView>
   }
 
   navigationPage() {
-    Navigator.push(
+    Navigator.pushReplacement(
         context,
         MaterialPageRoute(
             builder: (context) => TextRecognized(cameras: widget.cameras)));

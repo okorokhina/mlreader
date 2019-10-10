@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mlreader/core/blocs/bloc_provider.dart';
 import 'package:mlreader/core/blocs/bloc_text_recognized.dart';
 import 'package:camera/camera.dart';
+import 'package:mlreader/core/ui/scan_view.dart';
 import 'package:mlreader/core/ui/splash_view.dart';
 
 List<CameraDescription> cameras;

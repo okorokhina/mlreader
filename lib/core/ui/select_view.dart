@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_device_type/flutter_device_type.dart';
 
 class SelectView extends StatefulWidget {
   SelectView({@required this.textRecognizedBloc});
@@ -13,8 +14,12 @@ class SelectView extends StatefulWidget {
 }
 
 class SelectViewState extends State<SelectView> {
+
+  double bottom;
+
   @override
   Widget build(BuildContext context) {
+    Device.get().isIphoneX ? bottom = 100 : bottom = 65;
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
@@ -101,7 +106,6 @@ class SelectViewState extends State<SelectView> {
               },
             ),
           )),
-          // SizedBox(height: 10),
           Container(
             height: 36,
             decoration: BoxDecoration(
@@ -127,7 +131,7 @@ class SelectViewState extends State<SelectView> {
             ),
           ),
           Container(
-            margin: EdgeInsets.only(bottom: 70),
+            margin: EdgeInsets.only(bottom: bottom),
               child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
