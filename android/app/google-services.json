@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "559235148554",
+    "firebase_url": "https://ml-reader-d9abf.firebaseio.com",
+    "project_id": "ml-reader-d9abf",
+    "storage_bucket": "ml-reader-d9abf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:559235148554:android:5603138bba6e8cada468f3",
+        "android_client_info": {
+          "package_name": "ua.a5.mlreader"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "559235148554-oe4s4kr2c5ohebhibbcl4m6dsdfg1e1m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfgW7Sll9XNbj3t81HcVrF5Ejc2i8ALdA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "559235148554-oe4s4kr2c5ohebhibbcl4m6dsdfg1e1m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "559235148554-nudg35f6q1ts4nj31o3qdf2roepc85fh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "ua.a5.mlreader"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
