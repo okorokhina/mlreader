@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:mlreader/core/blocs/ads_bloc.dart';
 import 'package:mlreader/core/blocs/bloc_provider.dart';
-import 'package:mlreader/core/blocs/bloc_text_recognized_android.dart';
+import 'package:mlreader/core/blocs/bloc_text_recognized.dart';
 import 'package:mlreader/core/blocs/language_bloc.dart';
 import 'package:mlreader/core/ui/select_view.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter_device_type/flutter_device_type.dart';
 
 class TextRecognized extends StatefulWidget {
   TextRecognized({@required this.cameras});
@@ -20,17 +22,19 @@ class TextRecognized extends StatefulWidget {
 class TextRecognizedState extends State<TextRecognized> {
   File pickedImage;
   bool isImageLoaded = false;
-  CameraController _controller;
+  CameraController controller;
   bool select;
+  final textRecognizedBloc = TextRecognizedBloc();
+  final adsBloc = AdsBloc();
+  double bottom;
   LanguageBloc lang = LanguageBloc();
 
   @override
   void initState() {
     super.initState();
-    lang.identifyLanguage("hello how are you?");
-
-    _controller = CameraController(widget.cameras[0], ResolutionPreset.medium);
-    _controller.initialize().then((_) {
+    adsBloc.adsBanner();
+    controller = CameraController(widget.cameras[0], ResolutionPreset.medium);
+    controller.initialize().then((_) {
       if (!mounted) {
         return;
       }
@@ -40,14 +44,13 @@ class TextRecognizedState extends State<TextRecognized> {
 
   @override
   void dispose() {
-    _controller?.dispose();
+    controller?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final TextRecognizedBloc textRecognizedBloc =
-        BlocProvider.of<TextRecognizedBloc>(context);
+    Device.get().isIphoneX ? bottom = 110 : bottom = 70;
     textRecognizedBloc.scanColor.add(Colors.white);
     textRecognizedBloc.selectColor.add(null);
     return Scaffold(
@@ -57,7 +60,7 @@ class TextRecognizedState extends State<TextRecognized> {
         ),
         body: Stack(children: <Widget>[
           Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               Container(
                   height: 55,
@@ -132,45 +135,50 @@ class TextRecognizedState extends State<TextRecognized> {
               child: Image.asset("assets/CombinedShape.png"),
             ),
           )),
-          Positioned(
-              top: 550,
-              left: 60,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    GestureDetector(
-                      child: Container(
-                        width: 300,
-                        height: 30,
-                        decoration: BoxDecoration(
-                            color: Colors.black54,
-                            borderRadius: BorderRadius.all(Radius.circular(5))),
-                        child: Center(
-                            child: Text(
-                          "Please scan the text you want to read",
-                          style: TextStyle(color: Colors.white),
-                        )),
-                      ),
-                      onTap: () {
-                        textRecognizedBloc.takePhoto(context, _controller);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SelectView(
-                                    textRecognizedBloc: textRecognizedBloc)));
-                      },
-                    ),
-                  ])),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Container(
+                  margin: EdgeInsets.only(bottom: bottom, left: 30, right: 30),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        GestureDetector(
+                          child: Container(
+                            width: 300,
+                            height: 30,
+                            decoration: BoxDecoration(
+                                color: Colors.black54,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5))),
+                            child: Center(
+                                child: Text(
+                              "Please scan the text you want to read",
+                              style: TextStyle(color: Colors.white),
+                            )),
+                          ),
+                          onTap: () {
+                            textRecognizedBloc.takePhoto(context, controller);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SelectView(
+                                        textRecognizedBloc:
+                                            textRecognizedBloc)));
+                          },
+                        ),
+                      ])),
+            ],
+          ),
         ]));
   }
 
   cameraScan() {
-    if (!_controller.value.isInitialized) {
+    if (!controller.value.isInitialized) {
       return Container();
     }
-    return AspectRatio(
-      aspectRatio: _controller.value.aspectRatio,
-      child: CameraPreview(_controller),
+    return Expanded(
+      child: Container(child: CameraPreview(controller)),
     );
   }
 }

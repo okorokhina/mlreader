@@ -23,8 +23,9 @@ class TextRecognizedBloc extends BlocBase {
 
   String _getTimestamp() => DateTime.now().millisecondsSinceEpoch.toString();
 
-  Future<void> takePhoto(BuildContext context, _controller) async {
-    if (!_controller.value.isInitialized) {
+  Future<void> takePhoto(BuildContext context, controller) async {
+    print("dsasffsmfsmfdomfodfmdomfdofmdofmdofm");
+    if (!controller.value.isInitialized) {
       return null;
     }
     final Directory textDir = await getApplicationDocumentsDirectory();
@@ -32,14 +33,15 @@ class TextRecognizedBloc extends BlocBase {
     await Directory(dirPath).create(recursive: true);
     final String filePath = '$dirPath/${_getTimestamp()}.jpg';
 
-    if (_controller.value.isTakingPicture) {
+    if (controller.value.isTakingPicture) {
       return null;
     }
     try {
-      await _controller.takePicture(filePath);
+      await controller.takePicture(filePath);
       File image = await FlutterExifRotation.rotateImage(path: filePath);
-      photo.add(filePath);
+      photo.add(image.path);
       readText(File(image.path));
+      print(image.path);
     } catch (e) {
       print(e);
     }
@@ -92,8 +94,6 @@ class TextRecognizedBloc extends BlocBase {
       }
     }
     identifyLanguage(buffer.toString());
-
-
   }
 
   dispose() {
