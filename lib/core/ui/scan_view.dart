@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mlreader/core/blocs/bloc_provider.dart';
 import 'package:mlreader/core/blocs/bloc_text_recognized_android.dart';
+import 'package:mlreader/core/blocs/language_bloc.dart';
 import 'package:mlreader/core/ui/select_view.dart';
 import 'package:camera/camera.dart';
 
@@ -21,10 +22,13 @@ class TextRecognizedState extends State<TextRecognized> {
   bool isImageLoaded = false;
   CameraController _controller;
   bool select;
+  LanguageBloc lang = LanguageBloc();
 
   @override
   void initState() {
     super.initState();
+    lang.identifyLanguage("hello how are you?");
+
     _controller = CameraController(widget.cameras[0], ResolutionPreset.medium);
     _controller.initialize().then((_) {
       if (!mounted) {

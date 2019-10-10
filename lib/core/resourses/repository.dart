@@ -5,6 +5,6 @@ class Repository{
   TextToSound tts = TextToSound();
   MlKitLanguage mlkitLang = MlKitLanguage();
 
-  getVoice(String voiceText) => tts.speak(voiceText);
-//  identifyLang(String text) => mlkitLang.identifyLanguage(text);
+  getVoice(String voiceText, String lang) => tts.speak(voiceText, lang);
+  identifyLang(String text) => mlkitLang.identifyLanguage(text);
 }

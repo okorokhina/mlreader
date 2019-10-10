@@ -13,8 +13,9 @@ class TextToSound{
     voices = await flutterTts.getVoices;
   }
 
-  Future speak(String voiceText) async {
+  Future speak(String voiceText, String lang) async {
     var result;
+    await flutterTts.setLanguage(lang);
     if (voiceText != null) {
       if (voiceText.isNotEmpty) {
         result = await flutterTts.speak(voiceText);
