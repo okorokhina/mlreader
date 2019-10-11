@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
+import 'package:mlreader/core/ui/progressbar.dart';
 
 class SelectView extends StatefulWidget {
   SelectView({@required this.textRecognizedBloc});
@@ -13,9 +15,34 @@ class SelectView extends StatefulWidget {
   }
 }
 
-class SelectViewState extends State<SelectView> {
-
+class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
   double bottom;
+  // AnimationController parentController;
+  AnimationController playPauseController;
+  AnimationController songCompletedController;
+
+  Animation<double> songCompletedAnimation;
+  Animation<Color> songsContainerTextColorAnimation;
+
+  double soungCompleted = 0.0;
+  bool play = false;
+
+  @override
+  void initState() {
+    super.initState();
+    songCompletedController =
+        AnimationController(vsync: this, duration: Duration(seconds: 10))
+          ..addListener(() {
+            setState(() {
+              soungCompleted = songCompletedAnimation.value;
+            });
+          });
+
+    songCompletedAnimation =
+        Tween<double>(begin: 0.0, end: 330).animate(songCompletedController);
+    playPauseController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,41 +134,81 @@ class SelectViewState extends State<SelectView> {
             ),
           )),
           Container(
-            height: 36,
-            decoration: BoxDecoration(
-                border: Border.all(color: Theme.of(context).primaryColor),
-                borderRadius: BorderRadius.all(Radius.circular(16.5))),
-            margin: EdgeInsets.only(left: 40, right: 40, bottom: 80),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+            margin: EdgeInsets.only(left: 40, right: 40),
+            child: Column(
               children: <Widget>[
-                IconButton(
-                  icon: Image.asset("assets/RewindBack.png"),
-                  onPressed: () {},
+                Container(
+                  height: 36,
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Theme.of(context).primaryColor),
+                      borderRadius: BorderRadius.all(Radius.circular(16.5))),
+                  margin: EdgeInsets.only(bottom: 80),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      IconButton(
+                        icon: Image.asset("assets/RewindBack.png"),
+                        onPressed: () {
+                          songCompletedController.reverse();
+                          // Timer(Duration(seconds: 2), playBack());
+                        },
+                      ),
+                      InkWell(
+                          onTap: () {
+                            readText();
+                          },
+                          child: Material(
+                              child: AnimatedIcon(
+                            size: 30,
+                            color: Theme.of(context).primaryColor,
+                            icon: AnimatedIcons.play_pause,
+                            progress: playPauseController,
+                          ))),
+                      IconButton(
+                        icon: Image.asset("assets/Rewind.png"),
+                        onPressed: () {},
+                      )
+                    ],
+                  ),
                 ),
-                IconButton(
-                  icon: Image.asset("assets/Play.png"),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  icon: Image.asset("assets/Rewind.png"),
-                  onPressed: () {},
-                )
+                Center(
+                    child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: CustomPaint(
+                    painter: ProgressBar(
+                        context: context, songCompleted: soungCompleted),
+                  ),
+                ))
               ],
             ),
           ),
           Container(
-            margin: EdgeInsets.only(bottom: bottom),
+              margin: EdgeInsets.only(bottom: bottom),
               child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Image.asset("assets/Download.png"),
-              SizedBox(width: 5),
-              Text("Save to file storage")
-            ],
-          ))
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset("assets/Download.png"),
+                  SizedBox(width: 5),
+                  Text("Save to file storage")
+                ],
+              ))
         ],
       ),
     );
+  }
+
+  readText() {
+      if (play) {
+      playPauseController.reverse();
+      songCompletedController.stop();
+    } else {
+      playPauseController.forward();
+      songCompletedController.forward();
+    }
+    play = !play;
+  }
+
+  playBack(){
+    songCompletedController.stop();
   }
 }
