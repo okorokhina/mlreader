@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mlreader/core/blocs/ads_bloc.dart';
 import 'package:mlreader/core/blocs/bloc_provider.dart';
 import 'package:mlreader/core/blocs/bloc_text_recognized.dart';
+import 'package:mlreader/core/blocs/language_bloc.dart';
 import 'package:mlreader/core/ui/select_view.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
@@ -26,6 +27,7 @@ class TextRecognizedState extends State<TextRecognized> {
   final textRecognizedBloc = TextRecognizedBloc();
   final adsBloc = AdsBloc();
   double bottom;
+  LanguageBloc lang = LanguageBloc();
 
   @override
   void initState() {
