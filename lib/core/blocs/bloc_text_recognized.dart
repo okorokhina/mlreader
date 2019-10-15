@@ -1,7 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
-import 'package:firebase_mlkit_language/firebase_mlkit_language.dart';
 import 'package:flutter/material.dart';
 import 'package:mlreader/core/blocs/bloc_provider.dart';
+import 'package:mlreader/core/models/text_recognize.dart';
 import 'package:mlreader/core/resourses/repository.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
@@ -24,7 +25,6 @@ class TextRecognizedBloc extends BlocBase {
   String _getTimestamp() => DateTime.now().millisecondsSinceEpoch.toString();
 
   Future<void> takePhoto(BuildContext context, controller) async {
-    print("dsasffsmfsmfdomfodfmdomfdofmdofmdofm");
     if (!controller.value.isInitialized) {
       return null;
     }
@@ -40,8 +40,11 @@ class TextRecognizedBloc extends BlocBase {
       await controller.takePicture(filePath);
       File image = await FlutterExifRotation.rotateImage(path: filePath);
       photo.add(image.path);
-      readText(File(image.path));
-      print(image.path);
+      // readText(File(image.path));
+      List<int> imageBytes = image.readAsBytesSync();
+      String base64Image = base64Encode(imageBytes);
+      TextRecognize text = await rep.convert(base64Image);
+      getVoice(text);
     } catch (e) {
       print(e);
     }
@@ -54,23 +57,19 @@ class TextRecognizedBloc extends BlocBase {
     if (tempStore != null) {
       File image = await FlutterExifRotation.rotateImage(path: tempStore.path);
       photo.add(tempStore.path);
-      readText(image);
+      List<int> imageBytes = image.readAsBytesSync();
+      String base64Image = base64Encode(imageBytes);
+      TextRecognize text = await rep.convert(base64Image);
+      getVoice(text);
     }
   }
 
-  identifyLanguage(String text) async {
-    List<LanguageLabel> lang = await rep.identifyLang(text);
-    String language = '';
-    for(var l in lang){
-      print("lang " + l.languageCode.toString());
-      language = l.languageCode.toString();
+  getVoice(TextRecognize text) {
+    for (var response in text.responses) {
+      for (var textAnnotation in response.textAnnotations) {
+        rep.getVoice(textAnnotation.description, textAnnotation.locale);
+      }
     }
-
-    getVoice(text, language);
-    return language;
-  }
-  getVoice(String voiceText, lang){
-    rep.getVoice(voiceText, lang);
   }
 
   Future readText(File filePath) async {
@@ -83,18 +82,13 @@ class TextRecognizedBloc extends BlocBase {
       for (TextLine line in block.lines) {
         for (TextElement word in line.elements) {
           print(word.text);
-          final List<RecognizedLanguage> languages = block.recognizedLanguages;
           buffer.write(word.text);
-
-//          print("languages languages languages====> $languages");
-//          for(var l in block.recognizedLanguages){
-//            print("lang code --------------->"+l.languageCode.toString());
-//          }
         }
       }
     }
-    identifyLanguage(buffer.toString());
   }
+
+  top(String tap) => rep.stop(tap);
 
   dispose() {
     detectedText.close();

@@ -1,7 +1,7 @@
-import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
+import 'package:mlreader/core/resourses/text_to_sound.dart';
 import 'package:mlreader/core/ui/progressbar.dart';
 
 class SelectView extends StatefulWidget {
@@ -17,7 +17,6 @@ class SelectView extends StatefulWidget {
 
 class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
   double bottom;
-  // AnimationController parentController;
   AnimationController playPauseController;
   AnimationController songCompletedController;
 
@@ -26,6 +25,7 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
 
   double soungCompleted = 0.0;
   bool play = false;
+  final textToSound = TextToSound();
 
   @override
   void initState() {
@@ -156,6 +156,7 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                       InkWell(
                           onTap: () {
                             readText();
+                            // textRecognizedBloc.stop("play");
                           },
                           child: Material(
                               child: AnimatedIcon(
@@ -198,17 +199,21 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
   }
 
   readText() {
-      if (play) {
+    if (play) {
       playPauseController.reverse();
       songCompletedController.stop();
+      textToSound.sppek.add("play");
+      textToSound.stop("play");
     } else {
+      textToSound.stop("play");
+      textToSound.sppek.add("play");
       playPauseController.forward();
       songCompletedController.forward();
     }
     play = !play;
   }
 
-  playBack(){
+  playBack() {
     songCompletedController.stop();
   }
 }

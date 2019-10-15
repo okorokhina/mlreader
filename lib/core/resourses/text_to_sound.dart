@@ -1,6 +1,13 @@
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:rxdart/rxdart.dart';
 
 class TextToSound{
+
+  final sppek = BehaviorSubject<String>();
+   var result;
+
+  Observable<String> get outSppek => sppek.stream;
+
   FlutterTts flutterTts = FlutterTts();
   dynamic languages;
   dynamic voices;
@@ -14,13 +21,28 @@ class TextToSound{
   }
 
   Future speak(String voiceText, String lang) async {
-    var result;
+    // var result;
     await flutterTts.setLanguage(lang);
     if (voiceText != null) {
       if (voiceText.isNotEmpty) {
-        result = await flutterTts.speak(voiceText);
+        // outSppek.listen((data) async{
+        //   if(data == null){
+            result = await flutterTts.speak(voiceText);
+        //   }
+        // });
+        
       }
     }
     return result;
   }
+
+  Future stop(tap) async{
+   await flutterTts.stop();
+    // if (result == 1) setState(() => ttsState = TtsState.stopped);
+}
+
+  dispose(){
+    sppek.close();
+  }
+
 }

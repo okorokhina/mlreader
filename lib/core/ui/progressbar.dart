@@ -5,7 +5,6 @@ class ProgressBar extends CustomPainter{
 
   var songCompleted;
   var context;
-  // var progresBarColor;
 
   ProgressBar({this.songCompleted, this.context});
   

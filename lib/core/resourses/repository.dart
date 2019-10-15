@@ -1,13 +1,16 @@
-import 'package:mlreader/core/resourses/mlkit_language.dart';
 import 'package:mlreader/core/resourses/ads_banner.dart';
+import 'package:mlreader/core/resourses/network_manager.dart';
 import 'package:mlreader/core/resourses/text_to_sound.dart';
 
-class Repository{
+class Repository {
   TextToSound tts = TextToSound();
-  MlKitLanguage mlkitLang = MlKitLanguage();
+  NetworkManager networkManager = NetworkManager();
   final ads = Ads();
 
   getVoice(String voiceText, String lang) => tts.speak(voiceText, lang);
-  identifyLang(String text) => mlkitLang.identifyLanguage(text);
   Future adsBanner() => ads.showBanner();
+
+  stop(tap) => tts.stop(tap);
+
+  convert(base64Image) => networkManager.convert(base64Image);
 }
