@@ -16,11 +16,13 @@ class TextRecognizedBloc extends BlocBase {
   final photo = BehaviorSubject();
   final scanColor = BehaviorSubject();
   final selectColor = BehaviorSubject();
+  final internetConnect = BehaviorSubject();
 
   Observable get outDetectedText => detectedText.stream;
   Observable get outPhoto => photo.stream;
   Observable get outScanColor => scanColor.stream;
   Observable get outSelectColor => selectColor.stream;
+  Observable get outInternetConnect => internetConnect.stream;
 
   String _getTimestamp() => DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -95,5 +97,6 @@ class TextRecognizedBloc extends BlocBase {
     photo.close();
     scanColor.close();
     selectColor.close();
+    internetConnect.close();
   }
 }
