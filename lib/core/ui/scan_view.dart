@@ -5,7 +5,7 @@ import 'package:mlreader/core/blocs/bloc_text_recognized.dart';
 import 'package:mlreader/core/ui/select_view.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
-import 'package:connectivity/connectivity.dart';
+import 'package:mlreader/core/ui/widgets/internet_connection.dart';
 
 class TextRecognized extends StatefulWidget {
   TextRecognized({@required this.cameras});
@@ -26,21 +26,10 @@ class TextRecognizedState extends State<TextRecognized> {
   final textRecognizedBloc = TextRecognizedBloc();
   final adsBloc = AdsBloc();
   double bottom;
-  var subscription;
 
   @override
   void initState() {
     super.initState();
-    subscription = Connectivity()
-        .onConnectivityChanged
-        .listen((ConnectivityResult result) {
-      if (result != ConnectivityResult.mobile &&
-          result != ConnectivityResult.wifi) {
-        textRecognizedBloc.internetConnect.add("No internet connection");
-      } else {
-        textRecognizedBloc.internetConnect.add(null);
-      }
-    });
     adsBloc.adsBanner();
     controller = CameraController(widget.cameras[0], ResolutionPreset.medium);
     controller.initialize().then((_) {
@@ -54,7 +43,6 @@ class TextRecognizedState extends State<TextRecognized> {
   @override
   void dispose() {
     controller?.dispose();
-    subscription.cancel();
     super.dispose();
   }
 
@@ -181,28 +169,7 @@ class TextRecognizedState extends State<TextRecognized> {
             ],
           ),
           Positioned(
-            child: StreamBuilder(
-              stream: textRecognizedBloc.outInternetConnect,
-              builder: (context, snapshot) {
-                return snapshot.data != null
-                    ? Center(
-                        child: Container(
-                        margin: EdgeInsets.only(
-                            top: 20, bottom: 70, left: 20, right: 20),
-                        decoration: BoxDecoration(color: Colors.grey[200]),
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        child: Center(
-                          child: Text(
-                            snapshot.data,
-                            style: TextStyle(fontSize: 30),
-                          ),
-                        ),
-                      ))
-                    : Container();
-              },
-            ),
-          )
+              child: InternetConnection(textRecognizedBloc: textRecognizedBloc))
         ]));
   }
 
