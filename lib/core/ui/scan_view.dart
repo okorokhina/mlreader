@@ -2,10 +2,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mlreader/core/blocs/ads_bloc.dart';
 import 'package:mlreader/core/blocs/bloc_text_recognized.dart';
-import 'package:mlreader/core/ui/select_view.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
+import 'package:mlreader/core/ui/select_view.dart';
 import 'package:mlreader/core/ui/widgets/internet_connection.dart';
+import 'package:mlreader/core/ui/widgets/photo_button.dart';
+import 'package:mlreader/core/ui/widgets/scan_button.dart';
+import 'package:mlreader/core/ui/widgets/select_button.dart';
 
 class TextRecognized extends StatefulWidget {
   TextRecognized({@required this.cameras});
@@ -31,6 +34,8 @@ class TextRecognizedState extends State<TextRecognized> {
   void initState() {
     super.initState();
     adsBloc.adsBanner();
+
+    // Initialize the first phone camera
     controller = CameraController(widget.cameras[0], ResolutionPreset.medium);
     controller.initialize().then((_) {
       if (!mounted) {
@@ -53,12 +58,13 @@ class TextRecognizedState extends State<TextRecognized> {
     textRecognizedBloc.selectColor.add(null);
     return Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           elevation: 0.0,
           title: Text("ML Reader"),
         ),
         body: Stack(children: <Widget>[
           Column(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
                   height: 55,
@@ -73,39 +79,14 @@ class TextRecognizedState extends State<TextRecognized> {
                     child: Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                          Expanded(
-                            child: GestureDetector(
-                              child: SizedBox(
-                                  child: StreamBuilder(
-                                stream: textRecognizedBloc.outScanColor,
-                                builder: (context, snapshot) {
-                                  return Container(
-                                    alignment: Alignment.center,
-                                    decoration:
-                                        BoxDecoration(color: snapshot.data),
-                                    child: Text("SCAN"),
-                                  );
-                                },
-                              )),
+                          ScanButton(
+                              textRecognizedBloc: textRecognizedBloc,
                               onTap: () {
                                 textRecognizedBloc.scanColor.add(Colors.white);
                                 textRecognizedBloc.selectColor.add(null);
-                              },
-                            ),
-                          ),
-                          Expanded(
-                            child: GestureDetector(
-                              child: StreamBuilder(
-                                  stream: textRecognizedBloc.outSelectColor,
-                                  builder: (context, snapshot) {
-                                    return Container(
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        color: snapshot.data,
-                                      ),
-                                      child: Text("SELECT"),
-                                    );
-                                  }),
+                              }),
+                          SelectButton(
+                              textRecognizedBloc: textRecognizedBloc,
                               onTap: () {
                                 textRecognizedBloc.scanColor.add(null);
                                 textRecognizedBloc.selectColor
@@ -117,9 +98,7 @@ class TextRecognizedState extends State<TextRecognized> {
                                         builder: (context) => SelectView(
                                             textRecognizedBloc:
                                                 textRecognizedBloc)));
-                              },
-                            ),
-                          ),
+                              })
                         ]),
                   ))),
               cameraScan(),
@@ -133,46 +112,17 @@ class TextRecognizedState extends State<TextRecognized> {
               child: Image.asset("assets/CombinedShape.png"),
             ),
           )),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Container(
-                  margin: EdgeInsets.only(bottom: bottom, left: 30, right: 30),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        GestureDetector(
-                          child: Container(
-                            width: 300,
-                            height: 30,
-                            decoration: BoxDecoration(
-                                color: Colors.black54,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5))),
-                            child: Center(
-                                child: Text(
-                              "Please scan the text you want to read",
-                              style: TextStyle(color: Colors.white),
-                            )),
-                          ),
-                          onTap: () {
-                            textRecognizedBloc.takePhoto(context, controller);
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SelectView(
-                                        textRecognizedBloc:
-                                            textRecognizedBloc)));
-                          },
-                        ),
-                      ])),
-            ],
+          PhotoButton(
+            bottom: bottom,
+            controller: controller,
+            textRecognizedBloc: textRecognizedBloc,
           ),
           Positioned(
               child: InternetConnection(textRecognizedBloc: textRecognizedBloc))
         ]));
   }
 
+  // Open the camera if it is initialized
   cameraScan() {
     if (!controller.value.isInitialized) {
       return Container();

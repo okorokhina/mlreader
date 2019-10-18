@@ -21,8 +21,12 @@ class SplashViewState extends State<SplashView>
   @override
   void initState() {
     startTimer();
+
+    // Animation duration
     controller = new AnimationController(
         vsync: this, duration: new Duration(milliseconds: 700));
+
+    // Start of animation
     controller.forward();
     super.initState();
   }
@@ -31,6 +35,7 @@ class SplashViewState extends State<SplashView>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           elevation: 0.0,
           title: Text("ML Reader"),
         ),
@@ -40,6 +45,8 @@ class SplashViewState extends State<SplashView>
               height: 55,
               color: Theme.of(context).primaryColor,
             ),
+
+            // Logo enlargement animation
             ScaleTransition(
                 scale: controller,
                 child: Center(
@@ -51,6 +58,7 @@ class SplashViewState extends State<SplashView>
                     child: Image.asset("assets/a5.png"),
                   ),
                 )),
+
             Container(
               padding: EdgeInsets.only(left: 15, right: 15),
               margin: EdgeInsets.only(left: 50, right: 50, top: 140),
@@ -68,6 +76,7 @@ class SplashViewState extends State<SplashView>
         ));
   }
 
+  // Transition to the TextRecognized screen after 2 seconds
   startTimer() async {
     return Timer(Duration(seconds: 2), navigationPage);
   }

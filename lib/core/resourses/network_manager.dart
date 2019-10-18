@@ -9,6 +9,9 @@ class NetworkManager {
   static const _apiKey = "Your Api Key";
   String url = "https://vision.googleapis.com/v1/images:annotate?key=$_apiKey";
 
+  /* Submit Json to Google vision, get a response and parse Json 
+     for the Text Recognize model. */
+
   Future<TextRecognize> convert(base64Image) async {
     var body = json.encode({
       "requests": [
