@@ -17,6 +17,9 @@ class InternetConnectionState extends State<InternetConnection> {
 
   @override
   void initState() {
+    /* Listen to the internet connection and show or hide the message 
+    when not internet connectivity. */
+
     subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
