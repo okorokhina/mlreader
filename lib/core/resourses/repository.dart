@@ -11,7 +11,7 @@ class Repository {
 
 //  getVoice(String voiceText, String lang) => tts.speak(voiceText, lang);
   getVoice(String voiceText, String lang) => ttsGoogle.getVoices();
-  writeAudioFile(String voiceText, String name) => ttsGoogle.writeAudioFile(voiceText, name);
+  writeAudioFile(String voiceText, String locale) => ttsGoogle.writeAudioFile(voiceText, locale);
   Future adsBanner() => ads.showBanner();
 
   stop(tap) => tts.stop(tap);

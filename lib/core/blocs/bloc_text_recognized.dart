@@ -73,10 +73,12 @@ class TextRecognizedBloc extends BlocBase {
       for (var textAnnotation in response.textAnnotations) {
         rep.getVoice(textAnnotation.description, textAnnotation.locale);
         buffer.write(textAnnotation.description);
-        locale =  textAnnotation.locale;
+        locale = textAnnotation.locale;
+        print("textAnnotation.locale "  + textAnnotation.locale);
+        rep.writeAudioFile(buffer.toString(), textAnnotation.locale);
+
       }
     }
-    rep.writeAudioFile(buffer.toString(), locale);
 
     print("descript " + buffer.toString());
   }

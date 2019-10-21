@@ -20,12 +20,13 @@ class TextToSpeechAPI {
 
   TextToSpeechAPI._internal();
 
-  void writeAudioFile(String text, String name) async {
+  void writeAudioFile(String text, String locale) async {
     if (audioPlugin.state == AudioPlayerState.PLAYING) {
       await audioPlugin.stop();
     }
+    print("locale  $locale");
 //    final String audioContent = await TextToSpeechAPI().synthesizeText(text, _selectedVoice.name, _selectedVoice.languageCodes.first);
-    final String audioContent = await TextToSpeechAPI().synthesizeText(text,'en-US-Wavenet-F', "en-US");
+    final String audioContent = await TextToSpeechAPI().synthesizeText(text,'en-US-Wavenet-F', locale);
     if (audioContent == null) return;
     final bytes = Base64Decoder().convert(audioContent, 0, audioContent.length);
     final dir = await getTemporaryDirectory();
