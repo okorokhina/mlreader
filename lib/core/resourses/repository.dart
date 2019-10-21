@@ -10,7 +10,7 @@ class Repository {
   final ads = Ads();
 
 //  getVoice(String voiceText, String lang) => tts.speak(voiceText, lang);
-  getVoice(String voiceText, String lang) => ttsGoogle.getVoices();
+  getVoice() => ttsGoogle.getVoices();
   writeAudioFile(String voiceText, String locale) => ttsGoogle.writeAudioFile(voiceText, locale);
   Future adsBanner() => ads.showBanner();
 
