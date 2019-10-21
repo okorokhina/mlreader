@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mlreader/core/blocs/bloc_provider.dart';
 import 'package:mlreader/core/models/text_recognize.dart';
+import 'package:mlreader/core/resourses/TextToSpeechAPI.dart';
 import 'package:mlreader/core/resourses/repository.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
@@ -76,20 +77,17 @@ class TextRecognizedBloc extends BlocBase {
     }
   }
 
-  getVoice(TextRecognize text) {
+  getVoice(TextRecognize text) async {
     StringBuffer buffer = StringBuffer();
     String locale = "";
     for (var response in text.responses) {
       for (var textAnnotation in response.textAnnotations) {
-        rep.getVoice(textAnnotation.description, textAnnotation.locale);
         buffer.write(textAnnotation.description);
-        locale = textAnnotation.locale;
-        print("textAnnotation.locale "  + textAnnotation.locale);
-        rep.writeAudioFile(buffer.toString(), textAnnotation.locale);
-
+        locale = "${textAnnotation.locale}-${textAnnotation.locale.toUpperCase()}";
+        print("textAnnotation.locale "  + locale);
+        rep.writeAudioFile(buffer.toString(), locale);
       }
     }
-
     print("descript " + buffer.toString());
   }
 

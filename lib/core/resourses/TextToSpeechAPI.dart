@@ -9,10 +9,9 @@ class TextToSpeechAPI {
 
   static final TextToSpeechAPI _singleton = TextToSpeechAPI._internal();
   final _httpClient = HttpClient();
-  static const _apiKey = "AIzaSyDO0ew9TxAXw1fTzfYioUuP-IYLj2iiqcA";
+  static const _apiKey = "api key";
   static const _apiURL = "texttospeech.googleapis.com";
   AudioPlayer audioPlugin = AudioPlayer();
-
 
   factory TextToSpeechAPI() {
     return _singleton;
@@ -26,7 +25,7 @@ class TextToSpeechAPI {
     }
     print("locale  $locale");
 //    final String audioContent = await TextToSpeechAPI().synthesizeText(text, _selectedVoice.name, _selectedVoice.languageCodes.first);
-    final String audioContent = await TextToSpeechAPI().synthesizeText(text,'en-US-Wavenet-F', locale);
+    final String audioContent = await TextToSpeechAPI().synthesizeText(text,'$locale-Wavenet-E', locale);
     if (audioContent == null) return;
     final bytes = Base64Decoder().convert(audioContent, 0, audioContent.length);
     final dir = await getTemporaryDirectory();
