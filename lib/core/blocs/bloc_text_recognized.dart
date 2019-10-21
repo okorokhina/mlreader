@@ -77,11 +77,20 @@ class TextRecognizedBloc extends BlocBase {
   }
 
   getVoice(TextRecognize text) {
+    StringBuffer buffer = StringBuffer();
+    String locale = "";
     for (var response in text.responses) {
       for (var textAnnotation in response.textAnnotations) {
         rep.getVoice(textAnnotation.description, textAnnotation.locale);
+        buffer.write(textAnnotation.description);
+        locale = textAnnotation.locale;
+        print("textAnnotation.locale "  + textAnnotation.locale);
+        rep.writeAudioFile(buffer.toString(), textAnnotation.locale);
+
       }
     }
+
+    print("descript " + buffer.toString());
   }
 
   Future readText(File filePath) async {
@@ -98,6 +107,7 @@ class TextRecognizedBloc extends BlocBase {
         }
       }
     }
+    print("bufer " + buffer.toString());
   }
 
   top(String tap) => rep.stop(tap);

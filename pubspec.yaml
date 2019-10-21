@@ -35,6 +35,7 @@ dependencies:
   flutter_device_type: ^0.2.0
   http: ^0.12.0+2
   connectivity: ^0.4.5
+  audioplayer: ^0.5.2
 
 dev_dependencies:
   flutter_test:

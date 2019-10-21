@@ -44,5 +44,4 @@ class TextToSound{
   dispose(){
     sppek.close();
   }
-
 }
