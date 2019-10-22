@@ -27,6 +27,11 @@ class TextRecognizedBloc extends BlocBase {
 
   String _getTimestamp() => DateTime.now().millisecondsSinceEpoch.toString();
 
+  /* Create path in system for photo, rotate the photo if it is not in the correct position,
+     add the photo to the stream to select_view screen,
+     convert the picture to list of bytes and convert to base64, and send image 
+     to Google vision then we get respons. */
+
   Future<void> takePhoto(BuildContext context, controller) async {
     if (!controller.value.isInitialized) {
       return null;
@@ -43,7 +48,6 @@ class TextRecognizedBloc extends BlocBase {
       await controller.takePicture(filePath);
       File image = await FlutterExifRotation.rotateImage(path: filePath);
       photo.add(image.path);
-      // readText(File(image.path));
       List<int> imageBytes = image.readAsBytesSync();
       String base64Image = base64Encode(imageBytes);
       TextRecognize text = await rep.convert(base64Image);
@@ -52,6 +56,12 @@ class TextRecognizedBloc extends BlocBase {
       print(e);
     }
   }
+
+  /* Select an image from the gallery, change color in scan and select buttons,
+     rotate the picture if it is not in the correct position,
+     add the image to the stream to select_view screen,
+     convert the picture to list of bytes and convert to base64, and send image 
+     to Google vision then we get respons. */
 
   Future pickGallery() async {
     var tempStore = await ImagePicker.pickImage(source: ImageSource.gallery);

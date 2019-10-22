@@ -8,6 +8,8 @@ class Ads {
 
   BannerAd bannerAd;
 
+// method for displaying the banner and its location on the screen
+ 
    Future showBanner() {
     bannerAd ??= createBannerAd();
     bannerAd
@@ -18,6 +20,9 @@ class Ads {
       );
   }
 
+/* Create banner ads for iOS and Android platform, choise size for banner
+   and added listener for ads*/
+   
   BannerAd createBannerAd() {
     return BannerAd(
       adUnitId: 

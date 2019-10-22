@@ -5,6 +5,8 @@ import 'package:mlreader/core/resourses/TextToSpeechAPI.dart';
 import 'package:mlreader/core/resourses/text_to_sound.dart';
 import 'package:mlreader/core/ui/progressbar.dart';
 import 'package:mlreader/core/ui/widgets/internet_connection.dart';
+import 'package:mlreader/core/ui/widgets/scan_button.dart';
+import 'package:mlreader/core/ui/widgets/select_button.dart';
 
 class SelectView extends StatefulWidget {
   SelectView({@required this.textRecognizedBloc});
@@ -54,6 +56,7 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
     Device.get().isIphoneX ? bottom = 100 : bottom = 65;
     return Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           elevation: 0.0,
           title: Text(
             "ML Reader",
@@ -76,50 +79,29 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                          Expanded(
-                            child: GestureDetector(
-                              child: SizedBox(
-                                  child: StreamBuilder(
-                                stream: widget.textRecognizedBloc.outScanColor,
-                                builder: (context, snapshot) {
-                                  return Container(
-                                    alignment: Alignment.center,
-                                    decoration:
-                                        BoxDecoration(color: snapshot.data),
-                                    child: Text("SCAN"),
-                                  );
-                                },
-                              )),
-                              onTap: () {
-                                Navigator.of(context).pop();
-                                widget.textRecognizedBloc.scanColor
-                                    .add(Colors.white);
-                                widget.textRecognizedBloc.selectColor.add(null);
-                              },
-                            ),
+                          ScanButton(
+                            textRecognizedBloc: widget.textRecognizedBloc,
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              widget.textRecognizedBloc.scanColor
+                                  .add(Colors.white);
+                              widget.textRecognizedBloc.selectColor.add(null);
+                            },
                           ),
-                          Expanded(
-                            child: GestureDetector(
-                              child: StreamBuilder(
-                                  stream:
-                                      widget.textRecognizedBloc.outSelectColor,
-                                  builder: (context, snapshot) {
-                                    return Container(
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        color: snapshot.data,
-                                      ),
-                                      child: Text("SELECT"),
-                                    );
-                                  }),
+                          SelectButton(
+                              textRecognizedBloc: widget.textRecognizedBloc,
                               onTap: () {
                                 widget.textRecognizedBloc.scanColor.add(null);
                                 widget.textRecognizedBloc.selectColor
                                     .add(Colors.white);
                                 widget.textRecognizedBloc.pickGallery();
-                              },
-                            ),
-                          ),
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SelectView(
+                                            textRecognizedBloc:
+                                                widget.textRecognizedBloc)));
+                              })
                         ]),
                   ))),
               Expanded(
