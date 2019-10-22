@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:audioplayer/audioplayer.dart';
 import 'package:flutter/material.dart';
 import 'package:mlreader/core/blocs/bloc_provider.dart';
 import 'package:mlreader/core/models/text_recognize.dart';
@@ -13,17 +14,23 @@ import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 
 class TextRecognizedBloc extends BlocBase {
   Repository rep = Repository();
+  TextToSpeechAPI _textToSpeechAPI = TextToSpeechAPI();
+  AudioPlayer audioPlugin = AudioPlayer();
+  var audio;
+
   final detectedText = BehaviorSubject();
   final photo = BehaviorSubject();
   final scanColor = BehaviorSubject();
   final selectColor = BehaviorSubject();
   final internetConnect = BehaviorSubject();
+  final notisOpacity = BehaviorSubject();
 
   Observable get outDetectedText => detectedText.stream;
   Observable get outPhoto => photo.stream;
   Observable get outScanColor => scanColor.stream;
   Observable get outSelectColor => selectColor.stream;
   Observable get outInternetConnect => internetConnect.stream;
+  Observable get outNotisOpacity => notisOpacity.stream;
 
   String _getTimestamp() => DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -77,22 +84,36 @@ class TextRecognizedBloc extends BlocBase {
     }
   }
 
+  saveAudio() => rep.saveAudion();
+
+  // playAudio() => rep.playAudio();
+  // pauseAudio() => rep.pauseAudio();
+
   getVoice(TextRecognize text) async {
     StringBuffer buffer = StringBuffer();
     String locale = "";
     for (var response in text.responses) {
       for (var textAnnotation in response.textAnnotations) {
         buffer.write(textAnnotation.description);
-        if(textAnnotation.locale != null )  {
+        if (textAnnotation.locale != null) {
           var locale1 = textAnnotation.locale;
           locale =
-          "${textAnnotation.locale}-${textAnnotation.locale.toUpperCase()}";
+              "${textAnnotation.locale}-${textAnnotation.locale.toUpperCase()}";
           print("textAnnotation.locale " + locale);
-          rep.writeAudioFile(buffer.toString(), locale1);
+          audio = await rep.writeAudioFile(buffer.toString(), locale1);
+          audioPlugin.play(audio, isLocal: true);
         }
       }
     }
     print("descript " + buffer.toString());
+  }
+
+  Future<void> play() async {
+    await audioPlugin.play(audio, isLocal: true);
+  }
+
+  Future<void> pause() async {
+    await audioPlugin.pause();
   }
 
   Future readText(File filePath) async {
@@ -120,5 +141,6 @@ class TextRecognizedBloc extends BlocBase {
     scanColor.close();
     selectColor.close();
     internetConnect.close();
+    notisOpacity.close();
   }
 }

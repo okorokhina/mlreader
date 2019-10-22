@@ -15,6 +15,9 @@ class Repository {
   Future adsBanner() => ads.showBanner();
 
   stop(tap) => tts.stop(tap);
+  saveAudion() => ttsGoogle.saveAudion();
+  // playAudio() => ttsGoogle.play();
+  // pauseAudio() => ttsGoogle.pause();
 
   convert(base64Image) => networkManager.convert(base64Image);
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
@@ -7,6 +8,7 @@ import 'package:mlreader/core/ui/progressbar.dart';
 import 'package:mlreader/core/ui/widgets/internet_connection.dart';
 import 'package:mlreader/core/ui/widgets/scan_button.dart';
 import 'package:mlreader/core/ui/widgets/select_button.dart';
+import 'package:audioplayer/audioplayer.dart';
 
 class SelectView extends StatefulWidget {
   SelectView({@required this.textRecognizedBloc});
@@ -26,6 +28,8 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
 
   Animation<double> songCompletedAnimation;
   Animation<Color> songsContainerTextColorAnimation;
+
+  AudioPlayer audioPlayer;
 
   double soungCompleted = 0.0;
   bool play = false;
@@ -76,7 +80,7 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                         borderRadius: BorderRadius.all(Radius.circular(5)),
                         border: Border.all(color: Colors.white)),
                     margin: EdgeInsets.only(left: 8, right: 8),
-                      child: Row(
+                    child: Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
                           ScanButton(
@@ -148,6 +152,7 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                           InkWell(
                               onTap: () {
                                 readText();
+                                // widget.textRecognizedBloc.play();
                                 // textRecognizedBloc.stop("play");
                               },
                               child: Material(
@@ -165,14 +170,18 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                       child: DropdownButton<Voice>(
                         value: _selectedVoice,
                         hint: Text('Select Voice'),
-                        items: _voices.map((f) => DropdownMenuItem(
-                          value: f,
-                          child: Text('${f.name} - ${f.languageCodes.first} - ${f.gender}'),
-                        )).toList(),
+                        items: _voices
+                            .map((f) => DropdownMenuItem(
+                                  value: f,
+                                  child: Text(
+                                      '${f.name} - ${f.languageCodes.first} - ${f.gender}'),
+                                ))
+                            .toList(),
                         onChanged: (voice) {
                           setState(() {
                             _selectedVoice = voice;
@@ -183,30 +192,50 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                     Center(
                         child: Container(
                       width: MediaQuery.of(context).size.width,
-                      child: CustomPaint(
-                        painter: ProgressBar(
-                            context: context, songCompleted: soungCompleted),
-                      ),
+                      //           duration == null
+                      // ? new Container()
+                      // : new Slider(
+                      //     value: position?.inMilliseconds?.toDouble() ?? 0.0,
+                      //     onChanged: (double value) =>
+                      //         audioPlayer.seek((value / 1000).roundToDouble()),
+                      //     min: 0.0,
+                      //     max: duration.inMilliseconds.toDouble()),
+                      // child: CustomPaint(
+                      //   painter: ProgressBar(
+                      //       context: context, songCompleted: soungCompleted),
+                      // ),
                     ))
                   ],
                 ),
               ),
-              Container(
-                  margin: EdgeInsets.only(bottom: bottom),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Image.asset("assets/Download.png"),
-                      SizedBox(width: 5),
-                      Text("Save to file storage")
-                    ],
-                  ))
+              SizedBox(
+                height: 50,
+              ),
+              GestureDetector(
+                child: Container(
+                    margin: EdgeInsets.only(bottom: bottom),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Image.asset("assets/Download.png"),
+                        SizedBox(width: 5),
+                        Text("Save to file storage")
+                      ],
+                    )),
+                onTap: () {
+                  widget.textRecognizedBloc.saveAudio();
+                  widget.textRecognizedBloc.notisOpacity.add(1.0);
+                  Timer(Duration(seconds: 1),
+                      () => widget.textRecognizedBloc.notisOpacity.add(0.0));
+                },
+              )
             ],
           ),
           Positioned(
             child: InternetConnection(
                 textRecognizedBloc: widget.textRecognizedBloc),
-          )
+          ),
+          notisSaved()
         ]));
   }
 
@@ -214,22 +243,54 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
     final voices = await TextToSpeechAPI().getVoices();
     if (voices == null) return;
     setState(() {
-      _selectedVoice = voices.firstWhere((e) => e.name == 'en-US-Wavenet-F' && e.languageCodes.first == 'en-US', orElse: () => Voice('en-US-Wavenet-F', 'FEMALE', ['en-US']));
+      _selectedVoice = voices.firstWhere(
+          (e) =>
+              e.name == 'en-US-Wavenet-F' && e.languageCodes.first == 'en-US',
+          orElse: () => Voice('en-US-Wavenet-F', 'FEMALE', ['en-US']));
       _voices = voices;
     });
+  }
+
+  notisSaved() {
+    return StreamBuilder(
+      stream: widget.textRecognizedBloc.outNotisOpacity,
+      builder: (context, snapshot) {
+        if (snapshot.data != null) {
+          return AnimatedOpacity(
+              opacity: snapshot.data,
+              duration: Duration(seconds: 1),
+              child: TickerMode(
+                  enabled: false,
+                  child: Center(
+                    child: Container(
+                        decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20))),
+                        width: 150,
+                        height: 50,
+                        child: Center(
+                            child: Text(
+                          "Audio saved",
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ))),
+                  )));
+        } else {
+          return Container();
+        }
+      },
+    );
   }
 
   readText() {
     if (play) {
       playPauseController.reverse();
-      songCompletedController.stop();
-      textToSound.sppek.add("play");
-      textToSound.stop("play");
-    } else {
-      textToSound.stop("play");
-      textToSound.sppek.add("play");
-      playPauseController.forward();
       songCompletedController.forward();
+      widget.textRecognizedBloc.play();
+    } else {
+      songCompletedController.stop();
+      playPauseController.forward();
+      widget.textRecognizedBloc.pause();
     }
     play = !play;
   }
