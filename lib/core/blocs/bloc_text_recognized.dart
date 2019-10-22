@@ -73,9 +73,13 @@ class TextRecognizedBloc extends BlocBase {
     for (var response in text.responses) {
       for (var textAnnotation in response.textAnnotations) {
         buffer.write(textAnnotation.description);
-        locale = "${textAnnotation.locale}-${textAnnotation.locale.toUpperCase()}";
-        print("textAnnotation.locale "  + locale);
-        rep.writeAudioFile(buffer.toString(), locale);
+        if(textAnnotation.locale != null )  {
+          var locale1 = textAnnotation.locale;
+          locale =
+          "${textAnnotation.locale}-${textAnnotation.locale.toUpperCase()}";
+          print("textAnnotation.locale " + locale);
+          rep.writeAudioFile(buffer.toString(), locale1);
+        }
       }
     }
     print("descript " + buffer.toString());

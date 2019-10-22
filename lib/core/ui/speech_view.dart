@@ -43,7 +43,6 @@ class _MyHomePageState extends State<MyHomePage> {
     getVoices();
   }
 
-
   void synthesizeText(String text, String name) async {
     if (audioPlugin.state == AudioPlayerState.PLAYING) {
       await audioPlugin.stop();

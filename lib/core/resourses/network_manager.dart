@@ -6,7 +6,7 @@ import 'dart:convert' show json;
 import 'package:mlreader/core/models/text_recognize.dart';
 
 class NetworkManager {
-  static const _apiKey = "";
+  static const _apiKey = "AIzaSyDO0ew9TxAXw1fTzfYioUuP-IYLj2iiqcA";
   String url = "https://vision.googleapis.com/v1/images:annotate?key=$_apiKey";
 
   Future<TextRecognize> convert(base64Image) async {

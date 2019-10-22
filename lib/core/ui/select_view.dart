@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
+import 'package:mlreader/core/resourses/TextToSpeechAPI.dart';
 import 'package:mlreader/core/resourses/text_to_sound.dart';
 import 'package:mlreader/core/ui/progressbar.dart';
 import 'package:mlreader/core/ui/widgets/internet_connection.dart';
@@ -27,10 +28,13 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
   double soungCompleted = 0.0;
   bool play = false;
   final textToSound = TextToSound();
+  List<Voice> _voices = [];
+  Voice _selectedVoice;
 
   @override
   void initState() {
     super.initState();
+    getVoices();
     songCompletedController =
         AnimationController(vsync: this, duration: Duration(seconds: 10))
           ..addListener(() {
@@ -69,7 +73,7 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                         borderRadius: BorderRadius.all(Radius.circular(5)),
                         border: Border.all(color: Colors.white)),
                     margin: EdgeInsets.only(left: 8, right: 8),
-                    child: Row(
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
                           Expanded(
@@ -178,6 +182,22 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                         ],
                       ),
                     ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      child: DropdownButton<Voice>(
+                        value: _selectedVoice,
+                        hint: Text('Select Voice'),
+                        items: _voices.map((f) => DropdownMenuItem(
+                          value: f,
+                          child: Text('${f.name} - ${f.languageCodes.first} - ${f.gender}'),
+                        )).toList(),
+                        onChanged: (voice) {
+                          setState(() {
+                            _selectedVoice = voice;
+                          });
+                        },
+                      ),
+                    ),
                     Center(
                         child: Container(
                       width: MediaQuery.of(context).size.width,
@@ -206,6 +226,15 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                 textRecognizedBloc: widget.textRecognizedBloc),
           )
         ]));
+  }
+
+  void getVoices() async {
+    final voices = await TextToSpeechAPI().getVoices();
+    if (voices == null) return;
+    setState(() {
+      _selectedVoice = voices.firstWhere((e) => e.name == 'en-US-Wavenet-F' && e.languageCodes.first == 'en-US', orElse: () => Voice('en-US-Wavenet-F', 'FEMALE', ['en-US']));
+      _voices = voices;
+    });
   }
 
   readText() {
