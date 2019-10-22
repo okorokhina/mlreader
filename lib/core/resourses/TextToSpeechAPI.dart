@@ -9,9 +9,10 @@ class TextToSpeechAPI {
 
   static final TextToSpeechAPI _singleton = TextToSpeechAPI._internal();
   final _httpClient = HttpClient();
-  static const _apiKey = "api key";
+  static const _apiKey = "AIzaSyDO0ew9TxAXw1fTzfYioUuP-IYLj2iiqcA";
   static const _apiURL = "texttospeech.googleapis.com";
   AudioPlayer audioPlugin = AudioPlayer();
+  Voice _selectedVoice;
 
   factory TextToSpeechAPI() {
     return _singleton;
@@ -23,9 +24,12 @@ class TextToSpeechAPI {
     if (audioPlugin.state == AudioPlayerState.PLAYING) {
       await audioPlugin.stop();
     }
+    String name = '$locale-Wavenet-A';
+    _selectedVoice = await getVoice(locale);
     print("locale  $locale");
 //    final String audioContent = await TextToSpeechAPI().synthesizeText(text, _selectedVoice.name, _selectedVoice.languageCodes.first);
-    final String audioContent = await TextToSpeechAPI().synthesizeText(text,'$locale-Wavenet-E', locale);
+    final String audioContent = await TextToSpeechAPI().synthesizeText(text,
+        _selectedVoice.name, _selectedVoice.languageCodes.first);
     if (audioContent == null) return;
     final bytes = Base64Decoder().convert(audioContent, 0, audioContent.length);
     final dir = await getTemporaryDirectory();
@@ -34,7 +38,9 @@ class TextToSpeechAPI {
     await audioPlugin.play(file.path, isLocal: true);
   }
 
+
   Future<dynamic> synthesizeText(String text, String name, String languageCode) async {
+    print("text $text\n name $name \n langCode $languageCode");
     try {
       final uri = Uri.https(_apiURL, '/v1beta1/text:synthesize');
       final Map json = {
@@ -58,6 +64,13 @@ class TextToSpeechAPI {
       print("$e");
       return null;
     }
+  }
+
+  Future<Voice> getVoice(String locale) async {
+    final voices = await getVoices();
+    if (voices == null)
+      return null;
+    return voices.firstWhere((e) => e.name.contains(locale) && e.languageCodes.first.contains(locale) , orElse: () => Voice('en-US-Wavenet-F', 'FEMALE', ['en-US']));
   }
 
   Future<List<Voice>> getVoices() async {
@@ -116,9 +129,12 @@ class TextToSpeechAPI {
       }
       final httpResponse = await httpRequest.close();
       if (httpResponse.statusCode != HttpStatus.OK) {
+        print("httpResponse.statusCode " + httpResponse.statusCode.toString());
         throw Exception('Bad Response');
       }
       final responseBody = await httpResponse.transform(utf8.decoder).join();
+      print("responseBody " + responseBody.toString());
+
       return json.decode(responseBody);
     } on Exception catch(e) {
       print("$e");
