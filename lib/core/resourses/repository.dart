@@ -11,13 +11,12 @@ class Repository {
 
 //  getVoice(String voiceText, String lang) => tts.speak(voiceText, lang);
   getVoice() => ttsGoogle.getVoices();
+  saveAudion() => ttsGoogle.saveAudion();
+
   writeAudioFile(String voiceText, String locale) => ttsGoogle.writeAudioFile(voiceText, locale);
   Future adsBanner() => ads.showBanner();
 
   stop(tap) => tts.stop(tap);
-  saveAudion() => ttsGoogle.saveAudion();
-  // playAudio() => ttsGoogle.play();
-  // pauseAudio() => ttsGoogle.pause();
-
+  
   convert(base64Image) => networkManager.convert(base64Image);
 }

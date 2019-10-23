@@ -9,7 +9,6 @@ import 'package:mlreader/core/resourses/repository.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 
 class TextRecognizedBloc extends BlocBase {
@@ -33,6 +32,8 @@ class TextRecognizedBloc extends BlocBase {
   Observable get outNotisOpacity => notisOpacity.stream;
 
   String _getTimestamp() => DateTime.now().millisecondsSinceEpoch.toString();
+
+  saveAudio() => rep.saveAudion();
 
   /* Create path in system for photo, rotate the photo if it is not in the correct position,
      add the photo to the stream to select_view screen,
@@ -84,11 +85,6 @@ class TextRecognizedBloc extends BlocBase {
     }
   }
 
-  saveAudio() => rep.saveAudion();
-
-  // playAudio() => rep.playAudio();
-  // pauseAudio() => rep.pauseAudio();
-
   getVoice(TextRecognize text) async {
     StringBuffer buffer = StringBuffer();
     String locale = "";
@@ -116,24 +112,15 @@ class TextRecognizedBloc extends BlocBase {
     await audioPlugin.pause();
   }
 
-  Future readText(File filePath) async {
-    FirebaseVisionImage ourImage = FirebaseVisionImage.fromFile(filePath);
-    TextRecognizer recognizerText = FirebaseVision.instance.textRecognizer();
-    VisionText readText = await recognizerText.processImage(ourImage);
-    StringBuffer buffer = StringBuffer();
-
-    for (TextBlock block in readText.blocks) {
-      for (TextLine line in block.lines) {
-        for (TextElement word in line.elements) {
-          print(word.text);
-          buffer.write(word.text);
-        }
-      }
-    }
-    print("bufer " + buffer.toString());
+  rewind(double position, double duration) async {
+    double _percentBack = position - (15 / duration);
+    await audioPlugin.seek(_percentBack);
   }
 
-  top(String tap) => rep.stop(tap);
+  fastForward(double position, double duration) async {
+    double percentForward = position + (30 / duration);
+    await audioPlugin.seek(percentForward);
+  }
 
   dispose() {
     detectedText.close();

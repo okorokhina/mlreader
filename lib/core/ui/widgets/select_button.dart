@@ -23,16 +23,6 @@ class SelectButton extends StatelessWidget {
               );
             }),
         onTap: onTap,
-        // () {
-        //   textRecognizedBloc.scanColor.add(null);
-        //   textRecognizedBloc.selectColor.add(Colors.white);
-        //   textRecognizedBloc.pickGallery();
-        //   Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //           builder: (context) =>
-        //               SelectView(textRecognizedBloc: textRecognizedBloc)));
-        // },
       ),
     );
   }

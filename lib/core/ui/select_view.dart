@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:mlreader/core/resourses/TextToSpeechAPI.dart';
 import 'package:mlreader/core/resourses/text_to_sound.dart';
-import 'package:mlreader/core/ui/progressbar.dart';
 import 'package:mlreader/core/ui/widgets/internet_connection.dart';
 import 'package:mlreader/core/ui/widgets/scan_button.dart';
 import 'package:mlreader/core/ui/widgets/select_button.dart';
@@ -23,36 +22,46 @@ class SelectView extends StatefulWidget {
 
 class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
   double bottom;
-  AnimationController playPauseController;
-  AnimationController songCompletedController;
-
-  Animation<double> songCompletedAnimation;
-  Animation<Color> songsContainerTextColorAnimation;
-
-  AudioPlayer audioPlayer;
-
-  double soungCompleted = 0.0;
   bool play = false;
-  final textToSound = TextToSound();
+  AnimationController playPauseController;
+  StreamSubscription _positionSubscription;
+  StreamSubscription _audioPlayerStateSubscription;
   List<Voice> _voices = [];
   Voice _selectedVoice;
+  Duration duration;
+  Duration position;
 
   @override
   void initState() {
     super.initState();
     getVoices();
-    songCompletedController =
-        AnimationController(vsync: this, duration: Duration(seconds: 10))
-          ..addListener(() {
-            setState(() {
-              soungCompleted = songCompletedAnimation.value;
-            });
-          });
-
-    songCompletedAnimation =
-        Tween<double>(begin: 0.0, end: 330).animate(songCompletedController);
     playPauseController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+
+    _positionSubscription = widget
+        .textRecognizedBloc.audioPlugin.onAudioPositionChanged
+        .listen((p) => setState(() => position = p));
+    _audioPlayerStateSubscription =
+        widget.textRecognizedBloc.audioPlugin.onPlayerStateChanged.listen((s) {
+      if (s == AudioPlayerState.PLAYING) {
+        setState(() {
+          duration = widget.textRecognizedBloc.audioPlugin.duration;
+        });
+      } else if (s == AudioPlayerState.STOPPED) {
+        setState(() {
+          position = duration;
+        });
+      } else if (s == AudioPlayerState.COMPLETED) {
+        playPauseController.forward();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _positionSubscription.cancel();
+    _audioPlayerStateSubscription.cancel();
+    super.dispose();
   }
 
   @override
@@ -90,11 +99,13 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                               widget.textRecognizedBloc.scanColor
                                   .add(Colors.white);
                               widget.textRecognizedBloc.selectColor.add(null);
+                              widget.textRecognizedBloc.audio = null;
                             },
                           ),
                           SelectButton(
                               textRecognizedBloc: widget.textRecognizedBloc,
                               onTap: () {
+                                widget.textRecognizedBloc.audio = null;
                                 widget.textRecognizedBloc.scanColor.add(null);
                                 widget.textRecognizedBloc.selectColor
                                     .add(Colors.white);
@@ -127,89 +138,97 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                   },
                 ),
               )),
-              Container(
-                margin: EdgeInsets.only(left: 40, right: 40),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      height: 36,
-                      decoration: BoxDecoration(
-                          border:
-                              Border.all(color: Theme.of(context).primaryColor),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(16.5))),
-                      margin: EdgeInsets.only(bottom: 80),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          IconButton(
-                            icon: Image.asset("assets/RewindBack.png"),
-                            onPressed: () {
-                              songCompletedController.reverse();
-                              // Timer(Duration(seconds: 2), playBack());
-                            },
-                          ),
-                          InkWell(
-                              onTap: () {
-                                readText();
-                                // widget.textRecognizedBloc.play();
-                                // textRecognizedBloc.stop("play");
-                              },
-                              child: Material(
-                                  child: AnimatedIcon(
-                                size: 30,
-                                color: Theme.of(context).primaryColor,
-                                icon: AnimatedIcons.play_pause,
-                                progress: playPauseController,
-                              ))),
-                          IconButton(
-                            icon: Image.asset("assets/Rewind.png"),
-                            onPressed: () {},
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                      child: DropdownButton<Voice>(
-                        value: _selectedVoice,
-                        hint: Text('Select Voice'),
-                        items: _voices
-                            .map((f) => DropdownMenuItem(
-                                  value: f,
-                                  child: Text(
-                                      '${f.name} - ${f.languageCodes.first} - ${f.gender}'),
-                                ))
-                            .toList(),
-                        onChanged: (voice) {
-                          setState(() {
-                            _selectedVoice = voice;
-                          });
-                        },
-                      ),
-                    ),
-                    Center(
-                        child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      //           duration == null
-                      // ? new Container()
-                      // : new Slider(
-                      //     value: position?.inMilliseconds?.toDouble() ?? 0.0,
-                      //     onChanged: (double value) =>
-                      //         audioPlayer.seek((value / 1000).roundToDouble()),
-                      //     min: 0.0,
-                      //     max: duration.inMilliseconds.toDouble()),
-                      // child: CustomPaint(
-                      //   painter: ProgressBar(
-                      //       context: context, songCompleted: soungCompleted),
-                      // ),
-                    ))
-                  ],
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: DropdownButton<Voice>(
+                  value: _selectedVoice,
+                  hint: Text('Select Voice'),
+                  items: _voices
+                      .map((f) => DropdownMenuItem(
+                            value: f,
+                            child: Text(
+                                '${f.name} - ${f.languageCodes.first} - ${f.gender}'),
+                          ))
+                      .toList(),
+                  onChanged: (voice) {
+                    setState(() {
+                      _selectedVoice = voice;
+                    });
+                  },
                 ),
               ),
+              widget.textRecognizedBloc.audio != null
+                  ? Container(
+                      margin: EdgeInsets.only(left: 40, right: 40),
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            height: 36,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Theme.of(context).primaryColor),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(16.5))),
+                            margin: EdgeInsets.only(bottom: 20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                IconButton(
+                                  icon: Image.asset("assets/RewindBack.png"),
+                                  onPressed: () {
+                                    widget.textRecognizedBloc.rewind(
+                                        position?.inSeconds?.toDouble(),
+                                        duration.inSeconds.toDouble());
+                                  },
+                                ),
+                                InkWell(
+                                    onTap: () {
+                                      readText();
+                                    },
+                                    child: Material(
+                                        child: AnimatedIcon(
+                                      size: 30,
+                                      color: Theme.of(context).primaryColor,
+                                      icon: AnimatedIcons.pause_play,
+                                      progress: playPauseController,
+                                    ))),
+                                IconButton(
+                                  icon: Image.asset("assets/Rewind.png"),
+                                  onPressed: () {
+                                    widget.textRecognizedBloc.fastForward(
+                                        position?.inSeconds?.toDouble(),
+                                        duration.inSeconds.toDouble());
+                                  },
+                                )
+                              ],
+                            ),
+                          ),
+                          Center(
+                              child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: Slider(
+                                activeColor: Theme.of(context).primaryColor,
+                                inactiveColor: Colors.black,
+                                value: duration != null
+                                    ? position?.inMilliseconds?.toDouble() ??
+                                        0.0
+                                    : 0.0,
+                                onChanged: (double value) => widget
+                                    .textRecognizedBloc.audioPlayer
+                                    .seek((value / 1000).roundToDouble()),
+                                min: 0.0,
+                                max: duration != null
+                                    ? duration.inMilliseconds.toDouble()
+                                    : 0.0),
+                          )),
+                        ],
+                      ),
+                    )
+                  : Center(
+                      child: CircularProgressIndicator(),
+                    ),
               SizedBox(
-                height: 50,
+                height: 15,
               ),
               GestureDetector(
                 child: Container(
@@ -285,17 +304,11 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
   readText() {
     if (play) {
       playPauseController.reverse();
-      songCompletedController.forward();
       widget.textRecognizedBloc.play();
     } else {
-      songCompletedController.stop();
       playPauseController.forward();
       widget.textRecognizedBloc.pause();
     }
     play = !play;
-  }
-
-  playBack() {
-    songCompletedController.stop();
   }
 }
