@@ -31,12 +31,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   List<Voice> _voices = [];
   Voice _selectedVoice;
   AudioPlayer audioPlugin = AudioPlayer();
   final TextEditingController _searchQuery = TextEditingController();
-
 
   initState() {
     super.initState();
@@ -47,7 +45,8 @@ class _MyHomePageState extends State<MyHomePage> {
     if (audioPlugin.state == AudioPlayerState.PLAYING) {
       await audioPlugin.stop();
     }
-    final String audioContent = await TextToSpeechAPI().synthesizeText(text, _selectedVoice.name, _selectedVoice.languageCodes.first);
+    final String audioContent = await TextToSpeechAPI().synthesizeText(
+        text, _selectedVoice.name, _selectedVoice.languageCodes.first);
     if (audioContent == null) return;
     final bytes = Base64Decoder().convert(audioContent, 0, audioContent.length);
     final dir = await getTemporaryDirectory();
@@ -60,7 +59,10 @@ class _MyHomePageState extends State<MyHomePage> {
     final voices = await TextToSpeechAPI().getVoices();
     if (voices == null) return;
     setState(() {
-      _selectedVoice = voices.firstWhere((e) => e.name == 'en-US-Wavenet-F' && e.languageCodes.first == 'en-US', orElse: () => Voice('en-US-Wavenet-F', 'FEMALE', ['en-US']));
+      _selectedVoice = voices.firstWhere(
+          (e) =>
+              e.name == 'en-US-Wavenet-F' && e.languageCodes.first == 'en-US',
+          orElse: () => Voice('en-US-Wavenet-F', 'FEMALE', ['en-US']));
       _voices = voices;
     });
   }
@@ -71,17 +73,20 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: new AppBar(
         title: new Text(widget.title),
       ),
-      body: SingleChildScrollView(child:
-      Column(children: <Widget>[
+      body: SingleChildScrollView(
+          child: Column(children: <Widget>[
         Padding(
           padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
           child: DropdownButton<Voice>(
             value: _selectedVoice,
             hint: Text('Select Voice'),
-            items: _voices.map((f) => DropdownMenuItem(
-              value: f,
-              child: Text('${f.name} - ${f.languageCodes.first} - ${f.gender}'),
-            )).toList(),
+            items: _voices
+                .map((f) => DropdownMenuItem(
+                      value: f,
+                      child: Text(
+                          '${f.name} - ${f.languageCodes.first} - ${f.gender}'),
+                    ))
+                .toList(),
             onChanged: (voice) {
               setState(() {
                 _selectedVoice = voice;
@@ -97,12 +102,10 @@ class _MyHomePageState extends State<MyHomePage> {
             keyboardType: TextInputType.multiline,
             maxLines: null,
             decoration: InputDecoration(
-                hintText: 'Please enter text to convert to WaveNet Speech'
-            ),
+                hintText: 'Please enter text to convert to WaveNet Speech'),
           ),
         )
-      ])
-      ),
+      ])),
       floatingActionButton: FloatingActionButton(
         elevation: 4.0,
         child: Icon(Icons.audiotrack),
@@ -114,5 +117,4 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-
 }
