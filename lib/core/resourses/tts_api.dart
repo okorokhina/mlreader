@@ -31,11 +31,11 @@ class TextToSpeechAPI {
 
   saveAudion() async {
     String dirPath;
-    Directory textDir = await getApplicationDocumentsDirectory();
-    print("textDir textDir textDir textDir textDir $textDir");
+    Directory iOStextDir = await getApplicationDocumentsDirectory();
+    Directory androidTextDir = await getExternalStorageDirectory();
     Platform.isAndroid
-        ? dirPath = '/storage/emulated/0/AudioText'
-        : dirPath = "${textDir.path}/AudioText";
+        ? dirPath = "${androidTextDir.path}/AudioText"
+        : dirPath = "${iOStextDir.path}/AudioText";
     await Directory(dirPath).create(recursive: true);
     final filePath = File('$dirPath/${_getTimestamp()}.mp3');
     await filePath.writeAsBytes(bytes);
