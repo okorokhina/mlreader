@@ -116,7 +116,8 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                   },
                 ),
               )),
-              Padding(
+              Container(
+                  child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: DropdownButton<Voice>(
                   value: _selectedVoice,
@@ -124,8 +125,8 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                   items: _voices
                       .map((f) => DropdownMenuItem(
                             value: f,
-                            child: Text(
-                                '${f.name} - ${f.languageCodes.first} - ${f.gender}'),
+                            child:
+                                Text('${f.languageCodes.first} - ${f.gender}'),
                           ))
                       .toList(),
                   onChanged: (voice) {
@@ -135,7 +136,7 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                     widget.textRecognizedBloc.writeAudio(_selectedVoice);
                   },
                 ),
-              ),
+              )),
               MLAudioPlayer(
                 textRecognizedBloc: widget.textRecognizedBloc,
               ),

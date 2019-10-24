@@ -39,6 +39,7 @@ class MLAudioPlayerState extends State<MLAudioPlayer>
         widget.textRecognizedBloc.audioPlugin.onPlayerStateChanged.listen((s) {
       if (s == AudioPlayerState.PLAYING) {
         setState(() {
+          playPauseController.reverse();
           duration = widget.textRecognizedBloc.audioPlugin.duration;
         });
       } else if (s == AudioPlayerState.STOPPED) {
