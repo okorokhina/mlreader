@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:mlreader/core/models/voice.dart';
 import 'package:mlreader/core/resourses/tts_api.dart';
+import 'package:mlreader/core/ui/widgets/audio_player.dart';
 import 'package:mlreader/core/ui/widgets/internet_connection.dart';
 import 'package:mlreader/core/ui/widgets/notice.dart';
 import 'package:mlreader/core/ui/widgets/scan_button.dart';
