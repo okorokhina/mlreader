@@ -4,7 +4,7 @@ import 'package:audioplayer/audioplayer.dart';
 import 'package:flutter/material.dart';
 import 'package:mlreader/core/blocs/bloc_provider.dart';
 import 'package:mlreader/core/models/text_recognize.dart';
-import 'package:mlreader/core/resourses/TextToSpeechAPI.dart';
+import 'package:mlreader/core/models/voice.dart';
 import 'package:mlreader/core/resourses/repository.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
@@ -13,7 +13,6 @@ import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 
 class TextRecognizedBloc extends BlocBase {
   Repository rep = Repository();
-  TextToSpeechAPI _textToSpeechAPI = TextToSpeechAPI();
   AudioPlayer audioPlugin = AudioPlayer();
   var audio;
 
@@ -32,13 +31,14 @@ class TextRecognizedBloc extends BlocBase {
   Observable get outNotisOpacity => notisOpacity.stream;
 
   String _getTimestamp() => DateTime.now().millisecondsSinceEpoch.toString();
+  StringBuffer buffer = StringBuffer();
 
   saveAudio() => rep.saveAudion();
 
   /* Create path in system for photo, rotate the photo if it is not in the correct position,
      add the photo to the stream to select_view screen,
      convert the picture to list of bytes and convert to base64, and send image 
-     to Google vision then we get respons. */
+     to Google vision then we get response. */
 
   Future<void> takePhoto(BuildContext context, controller) async {
     if (!controller.value.isInitialized) {
@@ -69,7 +69,7 @@ class TextRecognizedBloc extends BlocBase {
      rotate the picture if it is not in the correct position,
      add the image to the stream to select_view screen,
      convert the picture to list of bytes and convert to base64, and send image 
-     to Google vision then we get respons. */
+     to Google vision then we get response. */
 
   Future pickGallery() async {
     var tempStore = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -86,22 +86,24 @@ class TextRecognizedBloc extends BlocBase {
   }
 
   getVoice(TextRecognize text) async {
-    StringBuffer buffer = StringBuffer();
-    String locale = "";
+    buffer.clear();
     for (var response in text.responses) {
       for (var textAnnotation in response.textAnnotations) {
         buffer.write(textAnnotation.description);
         if (textAnnotation.locale != null) {
-          var locale1 = textAnnotation.locale;
-          locale =
-              "${textAnnotation.locale}-${textAnnotation.locale.toUpperCase()}";
-          print("textAnnotation.locale " + locale);
-          audio = await rep.writeAudioFile(buffer.toString(), locale1);
-          audioPlugin.play(audio, isLocal: true);
+          var locale = textAnnotation.locale;
+          Voice voice = await rep.getVoice(locale);
+          writeAudio(voice);
         }
       }
     }
     print("descript " + buffer.toString());
+  }
+
+  writeAudio(voice) async {
+    if(buffer != null)
+      audio = await rep.writeAudioFile(buffer.toString(), voice);
+    audioPlugin.play(audio, isLocal: true);
   }
 
   Future<void> play() async {
