@@ -5,9 +5,9 @@ import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:mlreader/core/models/voice.dart';
 import 'package:mlreader/core/resourses/tts_api.dart';
 import 'package:mlreader/core/ui/widgets/internet_connection.dart';
+import 'package:mlreader/core/ui/widgets/notice.dart';
 import 'package:mlreader/core/ui/widgets/scan_button.dart';
 import 'package:mlreader/core/ui/widgets/select_button.dart';
-import 'package:audioplayer/audioplayer.dart';
 
 class SelectView extends StatefulWidget {
   SelectView({@required this.textRecognizedBloc});
@@ -21,47 +21,14 @@ class SelectView extends StatefulWidget {
 }
 
 class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
-  double bottom;
-  bool play = false;
-  AnimationController playPauseController;
-  StreamSubscription _positionSubscription;
-  StreamSubscription _audioPlayerStateSubscription;
   List<Voice> _voices = [];
   Voice _selectedVoice;
-  Duration duration;
-  Duration position;
+  double bottom;
 
   @override
   void initState() {
     super.initState();
     getVoices();
-    playPauseController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
-
-    _positionSubscription = widget
-        .textRecognizedBloc.audioPlugin.onAudioPositionChanged
-        .listen((p) => setState(() => position = p));
-    _audioPlayerStateSubscription =
-        widget.textRecognizedBloc.audioPlugin.onPlayerStateChanged.listen((s) {
-      if (s == AudioPlayerState.PLAYING) {
-        setState(() {
-          duration = widget.textRecognizedBloc.audioPlugin.duration;
-        });
-      } else if (s == AudioPlayerState.STOPPED) {
-        setState(() {
-          position = duration;
-        });
-      } else if (s == AudioPlayerState.COMPLETED) {
-        playPauseController.forward();
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _positionSubscription.cancel();
-    _audioPlayerStateSubscription.cancel();
-    super.dispose();
   }
 
   @override
@@ -69,6 +36,14 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
     Device.get().isIphoneX ? bottom = 100 : bottom = 65;
     return Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              widget.textRecognizedBloc.audio = null;
+              widget.textRecognizedBloc.stop();
+              Navigator.of(context).pop();
+            },
+          ),
           centerTitle: true,
           elevation: 0.0,
           title: Text(
@@ -95,6 +70,7 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                           ScanButton(
                             textRecognizedBloc: widget.textRecognizedBloc,
                             onTap: () {
+                              widget.textRecognizedBloc.audioPlugin.stop();
                               Navigator.of(context).pop();
                               widget.textRecognizedBloc.scanColor
                                   .add(Colors.white);
@@ -105,6 +81,7 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                           SelectButton(
                               textRecognizedBloc: widget.textRecognizedBloc,
                               onTap: () {
+                                widget.textRecognizedBloc.audioPlugin.stop();
                                 widget.textRecognizedBloc.audio = null;
                                 widget.textRecognizedBloc.scanColor.add(null);
                                 widget.textRecognizedBloc.selectColor
@@ -158,76 +135,9 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                   },
                 ),
               ),
-              widget.textRecognizedBloc.audio != null
-                  ? Container(
-                      margin: EdgeInsets.only(left: 40, right: 40),
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            height: 36,
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Theme.of(context).primaryColor),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(16.5))),
-                            margin: EdgeInsets.only(bottom: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: <Widget>[
-                                IconButton(
-                                  icon: Image.asset("assets/RewindBack.png"),
-                                  onPressed: () {
-                                    widget.textRecognizedBloc.rewind(
-                                        position?.inSeconds?.toDouble(),
-                                        duration.inSeconds.toDouble());
-                                  },
-                                ),
-                                InkWell(
-                                    onTap: () {
-                                      readText();
-                                    },
-                                    child: Material(
-                                        child: AnimatedIcon(
-                                      size: 30,
-                                      color: Theme.of(context).primaryColor,
-                                      icon: AnimatedIcons.pause_play,
-                                      progress: playPauseController,
-                                    ))),
-                                IconButton(
-                                  icon: Image.asset("assets/Rewind.png"),
-                                  onPressed: () {
-                                    widget.textRecognizedBloc.fastForward(
-                                        position?.inSeconds?.toDouble(),
-                                        duration.inSeconds.toDouble());
-                                  },
-                                )
-                              ],
-                            ),
-                          ),
-                          Center(
-                              child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            child: Slider(
-                                activeColor: Theme.of(context).primaryColor,
-                                inactiveColor: Colors.black,
-                                value: duration != null
-                                    ? position?.inMilliseconds?.toDouble() ??
-                                        0.0
-                                    : 0.0,
-                                onChanged: (double value) => widget
-                                    .textRecognizedBloc.audioPlayer
-                                    .seek((value / 1000).roundToDouble()),
-                                min: 0.0,
-                                max: duration != null
-                                    ? duration.inMilliseconds.toDouble()
-                                    : 0.0),
-                          )),
-                        ],
-                      ),
-                    )
-                  : Center(
-                      child: CircularProgressIndicator(),
-                    ),
+              MLAudioPlayer(
+                textRecognizedBloc: widget.textRecognizedBloc,
+              ),
               SizedBox(
                 height: 15,
               ),
@@ -244,9 +154,9 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                     )),
                 onTap: () {
                   widget.textRecognizedBloc.saveAudio();
-                  widget.textRecognizedBloc.notisOpacity.add(1.0);
+                  widget.textRecognizedBloc.noticeOpacity.add(1.0);
                   Timer(Duration(seconds: 1),
-                      () => widget.textRecognizedBloc.notisOpacity.add(0.0));
+                      () => widget.textRecognizedBloc.noticeOpacity.add(0.0));
                 },
               )
             ],
@@ -255,7 +165,9 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
             child: InternetConnection(
                 textRecognizedBloc: widget.textRecognizedBloc),
           ),
-          notisSaved()
+          Notice(
+              textRecognizedBloc:
+                  widget.textRecognizedBloc) // Audio Save Notification
         ]));
   }
 
@@ -269,47 +181,5 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
           orElse: () => Voice('en-US-Wavenet-F', 'FEMALE', ['en-US']));
       _voices = voices;
     });
-  }
-
-  notisSaved() {
-    return StreamBuilder(
-      stream: widget.textRecognizedBloc.outNotisOpacity,
-      builder: (context, snapshot) {
-        if (snapshot.data != null) {
-          return AnimatedOpacity(
-              opacity: snapshot.data,
-              duration: Duration(seconds: 1),
-              child: TickerMode(
-                  enabled: false,
-                  child: Center(
-                    child: Container(
-                        decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20))),
-                        width: 150,
-                        height: 50,
-                        child: Center(
-                            child: Text(
-                          "Audio saved",
-                          style: TextStyle(color: Colors.white, fontSize: 20),
-                        ))),
-                  )));
-        } else {
-          return Container();
-        }
-      },
-    );
-  }
-
-  readText() {
-    if (play) {
-      playPauseController.reverse();
-      widget.textRecognizedBloc.play();
-    } else {
-      playPauseController.forward();
-      widget.textRecognizedBloc.pause();
-    }
-    play = !play;
   }
 }

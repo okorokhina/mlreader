@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mlreader/core/blocs/ads_bloc.dart';
 import 'package:mlreader/core/blocs/bloc_text_recognized.dart';
@@ -22,10 +21,7 @@ class TextRecognized extends StatefulWidget {
 }
 
 class TextRecognizedState extends State<TextRecognized> {
-  File pickedImage;
-  bool isImageLoaded = false;
   CameraController controller;
-  bool select;
   final textRecognizedBloc = TextRecognizedBloc();
   final adsBloc = AdsBloc();
   double bottom;
