@@ -4,6 +4,7 @@ import 'package:audioplayer/audioplayer.dart';
 import 'package:flutter/material.dart';
 import 'package:mlreader/core/blocs/bloc_provider.dart';
 import 'package:mlreader/core/models/text_recognize.dart';
+import 'package:mlreader/core/models/voice.dart';
 import 'package:mlreader/core/resourses/repository.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
@@ -30,6 +31,7 @@ class TextRecognizedBloc extends BlocBase {
   Observable get outNotisOpacity => noticeOpacity.stream;
 
   String _getTimestamp() => DateTime.now().millisecondsSinceEpoch.toString();
+  StringBuffer buffer = StringBuffer();
 
   saveAudio() => rep.saveAudion();
 
@@ -61,7 +63,7 @@ class TextRecognizedBloc extends BlocBase {
 
   /* Rotate the image if it is not in the correct position,
      add the image to the stream to select_view screen,
-     convert the image to list of bytes and convert to base64, and send 
+     convert the image to list of bytes and convert to base64, and send
      to Google vision, then we get respons.*/
 
   recognizePhoto(filePath) async {
@@ -78,22 +80,23 @@ class TextRecognizedBloc extends BlocBase {
   }
 
   getVoice(TextRecognize text) async {
-    StringBuffer buffer = StringBuffer();
-    String locale = "";
+    buffer.clear();
     for (var response in text.responses) {
       for (var textAnnotation in response.textAnnotations) {
         buffer.write(textAnnotation.description);
         if (textAnnotation.locale != null) {
-          var locale1 = textAnnotation.locale;
-          locale =
-              "${textAnnotation.locale}-${textAnnotation.locale.toUpperCase()}";
-          print("textAnnotation.locale " + locale);
-          audio = await rep.writeAudioFile(buffer.toString(), locale1);
-          if (audio != null) audioPlugin.play(audio, isLocal: true);
-          return;
+          var locale = textAnnotation.locale;
+          Voice voice = await rep.getVoice(locale);
+          writeAudio(voice);
         }
       }
     }
+  }
+
+  writeAudio(voice) async {
+    if(buffer != null)
+      audio = await rep.writeAudioFile(buffer.toString(), voice);
+    audioPlugin.play(audio, isLocal: true);
   }
 
   Future<void> play() async {

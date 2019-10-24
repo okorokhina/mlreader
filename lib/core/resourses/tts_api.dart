@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:convert' show Base64Decoder, json, utf8;
 
+import 'package:mlreader/core/models/voice.dart';
 import 'package:path_provider/path_provider.dart';
 
 class TextToSpeechAPI {
@@ -9,23 +10,18 @@ class TextToSpeechAPI {
   final _httpClient = HttpClient();
   static const _apiKey = "Your Api Key";
   static const _apiURL = "texttospeech.googleapis.com";
-  Voice _selectedVoice;
+  static const _speakingRate = 0.8;
   String _getTimestamp() => DateTime.now().millisecondsSinceEpoch.toString();
   var bytes;
-
   factory TextToSpeechAPI() {
     return _singleton;
   }
 
   TextToSpeechAPI._internal();
 
-  writeAudioFile(String text, String locale) async {
-    String name = '$locale-Wavenet-A';
-    _selectedVoice = await getVoice(locale);
-    print("locale  $locale");
-//    final String audioContent = await TextToSpeechAPI().synthesizeText(text, _selectedVoice.name, _selectedVoice.languageCodes.first);
+  writeAudioFile(String text, Voice voice) async {
     final String audioContent = await TextToSpeechAPI().synthesizeText(
-        text, _selectedVoice.name, _selectedVoice.languageCodes.first);
+        text, voice.name, voice.languageCodes.first);
     bytes = Base64Decoder().convert(audioContent, 0, audioContent.length);
     final dir = await getTemporaryDirectory();
     final audioFile = File('${dir.path}/wavenet.mp3');
@@ -53,7 +49,10 @@ class TextToSpeechAPI {
       final Map json = {
         'input': {'text': text},
         'voice': {'name': name, 'languageCode': languageCode},
-        'audioConfig': {'audioEncoding': 'MP3'}
+        'audioConfig': {
+          'audioEncoding': 'MP3',
+          "speakingRate": _speakingRate
+        }
       };
 
       final jsonResponse = await _postJson(uri, json);
@@ -144,20 +143,5 @@ class TextToSpeechAPI {
       print("$e");
       return null;
     }
-  }
-}
-
-class Voice {
-  final String name;
-  final String gender;
-  final List<String> languageCodes;
-
-  Voice(this.name, this.gender, this.languageCodes);
-
-  static List<Voice> mapJSONStringToList(List<dynamic> jsonList) {
-    return jsonList.map((v) {
-      return Voice(
-          v['name'], v['ssmlGender'], List<String>.from(v['languageCodes']));
-    }).toList();
   }
 }
