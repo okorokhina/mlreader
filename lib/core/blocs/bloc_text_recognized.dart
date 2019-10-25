@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:audioplayer/audioplayer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mlreader/core/blocs/bloc_provider.dart';
 import 'package:mlreader/core/models/text_recognize.dart';
 import 'package:mlreader/core/models/voice.dart';
@@ -9,7 +10,6 @@ import 'package:mlreader/core/resourses/repository.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 
 class TextRecognizedBloc extends BlocBase {
   Repository rep = Repository();
@@ -68,7 +68,7 @@ class TextRecognizedBloc extends BlocBase {
 
   recognizePhoto(filePath) async {
     try {
-      File image = await FlutterExifRotation.rotateImage(path: filePath);
+      File image = File(filePath);
       photo.add(image.path);
       List<int> imageBytes = image.readAsBytesSync();
       String base64Image = base64Encode(imageBytes);

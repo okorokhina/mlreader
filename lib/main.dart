@@ -8,6 +8,7 @@ import 'package:mlreader/core/ui/splash_view.dart';
 List<CameraDescription> cameras;
 
 Future<Null> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   cameras = await availableCameras();
   runApp(MyApp());
 }

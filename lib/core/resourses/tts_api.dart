@@ -20,8 +20,8 @@ class TextToSpeechAPI {
   TextToSpeechAPI._internal();
 
   writeAudioFile(String text, Voice voice) async {
-    final String audioContent = await TextToSpeechAPI().synthesizeText(
-        text, voice.name, voice.languageCodes.first);
+    final String audioContent = await TextToSpeechAPI()
+        .synthesizeText(text, voice.name, voice.languageCodes.first);
     bytes = Base64Decoder().convert(audioContent, 0, audioContent.length);
     final dir = await getTemporaryDirectory();
     final audioFile = File('${dir.path}/wavenet.mp3');
@@ -31,11 +31,13 @@ class TextToSpeechAPI {
 
   saveAudion() async {
     String dirPath;
-    Directory iOStextDir = await getApplicationDocumentsDirectory();
-    Directory androidTextDir = await getExternalStorageDirectory();
-    Platform.isAndroid
-        ? dirPath = "${androidTextDir.path}/AudioText"
-        : dirPath = "${iOStextDir.path}/AudioText";
+    if (Platform.isAndroid) {
+      Directory androidTextDir = await getExternalStorageDirectory();
+      dirPath = "${androidTextDir.path}/AudioText";
+    } else {
+      Directory iOStextDir = await getApplicationDocumentsDirectory();
+      dirPath = "${iOStextDir.path}/AudioText";
+    }
     await Directory(dirPath).create(recursive: true);
     final filePath = File('$dirPath/${_getTimestamp()}.mp3');
     await filePath.writeAsBytes(bytes);
@@ -49,10 +51,7 @@ class TextToSpeechAPI {
       final Map json = {
         'input': {'text': text},
         'voice': {'name': name, 'languageCode': languageCode},
-        'audioConfig': {
-          'audioEncoding': 'MP3',
-          "speakingRate": _speakingRate
-        }
+        'audioConfig': {'audioEncoding': 'MP3', "speakingRate": _speakingRate}
       };
 
       final jsonResponse = await _postJson(uri, json);

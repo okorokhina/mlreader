@@ -19,32 +19,32 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-7986696519803132~6948349283</string>
+	<key>LSApplicationCategoryType</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
-	<key>UISupportsDocumentBrowser</key>
-	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>LSSupportsOpeningDocumentsInPlace</key>
-		<true/>
 		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-		<key>UIFileSharingEnabled</key>
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Can I use the camera please?</string>
-	<key>NSExtensionFileProviderOnlyVisibleInParentApplication</key>
-	<true/>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>I need this information for language recognition</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>I need this information for language recognition</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Can I use the mic please?</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Can I use the PhotoLibrary please?</string>
+	<key>UIFileSharingEnabled</key>
+	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -62,7 +62,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>UISupportsDocumentBrowser</key>
+	<true/>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>kTCCServiceMediaLibrary</key>
+	<string></string>
 </dict>
 </plist>
