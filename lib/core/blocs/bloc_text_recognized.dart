@@ -22,13 +22,15 @@ class TextRecognizedBloc extends BlocBase {
   final selectColor = BehaviorSubject();
   final internetConnect = BehaviorSubject();
   final noticeOpacity = BehaviorSubject();
+  final voiceController = BehaviorSubject<Voice>();
 
   Observable get outDetectedText => detectedText.stream;
   Observable get outPhoto => photo.stream;
   Observable get outScanColor => scanColor.stream;
   Observable get outSelectColor => selectColor.stream;
   Observable get outInternetConnect => internetConnect.stream;
-  Observable get outNotisOpacity => noticeOpacity.stream;
+  Observable get outNoticeOpacity => noticeOpacity.stream;
+  Observable<Voice> get outVoice => voiceController.stream;
 
   String _getTimestamp() => DateTime.now().millisecondsSinceEpoch.toString();
   StringBuffer buffer = StringBuffer();
@@ -87,10 +89,15 @@ class TextRecognizedBloc extends BlocBase {
         if (textAnnotation.locale != null) {
           var locale = textAnnotation.locale;
           Voice voice = await rep.getVoice(locale);
+          setVoice(voice);
           writeAudio(voice);
         }
       }
     }
+  }
+
+  setVoice(Voice voice){
+    voiceController.add(voice);
   }
 
   writeAudio(voice) async {
@@ -132,5 +139,6 @@ class TextRecognizedBloc extends BlocBase {
     selectColor.close();
     internetConnect.close();
     noticeOpacity.close();
+    voiceController.close();
   }
 }

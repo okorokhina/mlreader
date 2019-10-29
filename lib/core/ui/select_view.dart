@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
+import 'package:mlreader/core/blocs/bloc_text_recognized.dart';
 import 'package:mlreader/core/models/voice.dart';
 import 'package:mlreader/core/resourses/tts_api.dart';
 import 'package:mlreader/core/ui/widgets/audio_player.dart';
@@ -9,11 +10,12 @@ import 'package:mlreader/core/ui/widgets/internet_connection.dart';
 import 'package:mlreader/core/ui/widgets/notice.dart';
 import 'package:mlreader/core/ui/widgets/scan_button.dart';
 import 'package:mlreader/core/ui/widgets/select_button.dart';
+import 'package:mlreader/core/ui/widgets/voice_dropdown.dart';
 
 class SelectView extends StatefulWidget {
   SelectView({@required this.textRecognizedBloc});
 
-  final textRecognizedBloc;
+  final TextRecognizedBloc textRecognizedBloc;
 
   @override
   State<StatefulWidget> createState() {
@@ -30,6 +32,8 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     getVoices();
+//    widget.textRecognizedBloc.outVoice.listen((voice) =>
+//    _selectedVoice = voice);
   }
 
   @override
@@ -65,7 +69,7 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                         borderRadius: BorderRadius.all(Radius.circular(5)),
                         border: Border.all(color: Colors.white)),
                     margin: EdgeInsets.only(left: 8, right: 8),
-                    child: Row(
+                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
                           ScanButton(
@@ -116,30 +120,37 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                   },
                 ),
               )),
-              Container(
-                  child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: DropdownButton<Voice>(
-                  value: _selectedVoice,
-                  hint: Text('Select Voice'),
-                  items: _voices
-                      .map((f) => DropdownMenuItem(
-                            value: f,
-                            child:
-                                Text('${f.languageCodes.first} - ${f.gender}'),
-                          ))
-                      .toList(),
-                  onChanged: (voice) {
-                    setState(() {
-                      _selectedVoice = voice;
-                    });
-                    widget.textRecognizedBloc.writeAudio(_selectedVoice);
-                  },
-                ),
-              )),
+
               MLAudioPlayer(
                 textRecognizedBloc: widget.textRecognizedBloc,
               ),
+//              StreamBuilder<Voice>(
+//                stream: widget.textRecognizedBloc.outVoice,
+//                builder: (context, voiceSnapshot){
+//                  _selectedVoice = voiceSnapshot.data;
+                   Container(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      child: StreamBuilder<Voice>(
+                          stream: widget.textRecognizedBloc.outVoice,
+                          builder: (context, voiceSnapshot) {
+                            if(voiceSnapshot.hasData){
+                              var voices;
+                              voices.map((f) => DropdownMenuItem(
+                                value: f,
+                                child:
+                                Text('${voiceSnapshot.data.languageCodes.first} - ${voiceSnapshot.data.gender}'),
+                              ));
+//                              voiceSnapshot.data(
+//                                      (e) =>
+//                                  e.name == 'en-US-Wavenet-F' && e.languageCodes.first == 'en-US',
+//                                  orElse: () => Voice('en-US-Wavenet-F', 'FEMALE', ['en-US']));
+                              return VoiceDropdown(textRecognizedBloc: widget.textRecognizedBloc, selectedVoice: voiceSnapshot.data, voices: voices);
+
+                            }
+                            return VoiceDropdown(textRecognizedBloc: widget.textRecognizedBloc, selectedVoice: _selectedVoice, voices: _voices);
+                          }),),
+                  ),
               SizedBox(
                 height: 15,
               ),
@@ -174,14 +185,22 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
   }
 
   void getVoices() async {
-    final voices = await TextToSpeechAPI().getVoices();
+    List<Voice> voices = await TextToSpeechAPI().getVoices();
     if (voices == null) return;
-    setState(() {
-      _selectedVoice = voices.firstWhere(
-          (e) =>
-              e.name == 'en-US-Wavenet-F' && e.languageCodes.first == 'en-US',
-          orElse: () => Voice('en-US-Wavenet-F', 'FEMALE', ['en-US']));
-      _voices = voices;
-    });
+    _selectedVoice = voices.firstWhere(
+            (e) =>
+        e.name == 'en-US-Wavenet-F' && e.languageCodes.first == 'en-US',
+        orElse: () => Voice('en-US-Wavenet-F', 'FEMALE', ['en-US']));
+    widget.textRecognizedBloc.setVoice(_selectedVoice);
+    _voices = voices;
   }
+
+//  Voice _fetchVoice(Voice voice){
+//    if(voice == null){
+//      return _selectedVoice;
+//    } else{
+//      return voice;
+//    }
+//  }
+
 }

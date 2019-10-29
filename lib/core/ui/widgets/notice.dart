@@ -8,7 +8,7 @@ class Notice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: textRecognizedBloc.outNotisOpacity,
+      stream: textRecognizedBloc.outNoticeOpacity,
       builder: (context, snapshot) {
         if (snapshot.data != null) {
           return AnimatedOpacity(
