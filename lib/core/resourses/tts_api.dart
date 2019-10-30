@@ -8,7 +8,7 @@ import 'package:path_provider/path_provider.dart';
 class TextToSpeechAPI {
   static final TextToSpeechAPI _singleton = TextToSpeechAPI._internal();
   final _httpClient = HttpClient();
-  static const _apiKey = "Your Api Key";
+  static const _apiKey = "AIzaSyDO0ew9TxAXw1fTzfYioUuP-IYLj2iiqcA";
   static const _apiURL = "texttospeech.googleapis.com";
   static const _speakingRate = 0.8;
   String _getTimestamp() => DateTime.now().millisecondsSinceEpoch.toString();
@@ -34,7 +34,7 @@ class TextToSpeechAPI {
     Directory iOStextDir = await getApplicationDocumentsDirectory();
     Directory androidTextDir = await getExternalStorageDirectory();
     Platform.isAndroid
-        ? dirPath = "${androidTextDir.path}/AudioText"
+        ? dirPath = '/storage/emulated/0/AudioText'
         : dirPath = "${iOStextDir.path}/AudioText";
     await Directory(dirPath).create(recursive: true);
     final filePath = File('$dirPath/${_getTimestamp()}.mp3');

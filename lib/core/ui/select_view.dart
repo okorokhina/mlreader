@@ -151,14 +151,18 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                       children: <Widget>[
                         Image.asset("assets/Download.png"),
                         SizedBox(width: 5),
-                        Text("Save to file storage")
+                        Text("Save to file storage"),
+                        IconButton(
+                            icon: Image.asset("assets/upload.png"),
+                            onPressed: () => print("press"),
+                        )
                       ],
                     )),
                 onTap: () {
                   widget.textRecognizedBloc.saveAudio();
                   widget.textRecognizedBloc.noticeOpacity.add(1.0);
                   Timer(Duration(seconds: 1),
-                      () => widget.textRecognizedBloc.noticeOpacity.add(0.0));
+                      () => widget.textRecognizedBloc.noticeOpacity.add(0.0)); 
                 },
               )
             ],
