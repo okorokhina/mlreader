@@ -120,11 +120,16 @@ class MLAudioPlayerState extends State<MLAudioPlayer>
                           ? duration.inMilliseconds.toDouble()
                           : 0.0),
                 )),
+                IconButton(
+                  icon: Image.asset("assets/upload.png"),
+                  onPressed:() =>widget.textRecognizedBloc.getAudioPackage(),
+                ),
               ],
             ),
           )
-        : Center(
-            child: CircularProgressIndicator(),
+        : IconButton(
+            icon: Image.asset("assets/upload.png"),
+            onPressed:() =>widget.textRecognizedBloc.getAudioPackage(),
           );
   }
 

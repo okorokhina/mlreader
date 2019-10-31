@@ -93,6 +93,12 @@ class TextRecognizedBloc extends BlocBase {
     }
   }
 
+  getAudioPackage() async {
+    audio = "audio";
+    await audioPlugin.play( await rep.getAudio(), isLocal: true);
+
+  }
+
   writeAudio(voice) async {
     if(buffer != null)
       audio = await rep.writeAudioFile(buffer.toString(), voice);

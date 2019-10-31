@@ -9,6 +9,7 @@ import 'package:mlreader/core/ui/widgets/internet_connection.dart';
 import 'package:mlreader/core/ui/widgets/notice.dart';
 import 'package:mlreader/core/ui/widgets/scan_button.dart';
 import 'package:mlreader/core/ui/widgets/select_button.dart';
+import 'package:file_picker/file_picker.dart';
 
 class SelectView extends StatefulWidget {
   SelectView({@required this.textRecognizedBloc});
@@ -111,7 +112,13 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                                 image: FileImage(File(snapshot.data)))),
                       );
                     } else {
-                      return Center(child: CircularProgressIndicator());
+                      return Container(
+                        margin: EdgeInsets.only(top: 10, bottom: 10),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            image: DecorationImage(
+                                image:  AssetImage("assets/waves.png"),
+                      ),));
                     }
                   },
                 ),
@@ -143,28 +150,25 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
               SizedBox(
                 height: 15,
               ),
-              GestureDetector(
-                child: Container(
-                    margin: EdgeInsets.only(bottom: bottom),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Image.asset("assets/Download.png"),
-                        SizedBox(width: 5),
-                        Text("Save to file storage"),
-                        IconButton(
-                            icon: Image.asset("assets/upload.png"),
-                            onPressed: () => print("press"),
-                        )
-                      ],
-                    )),
-                onTap: () {
-                  widget.textRecognizedBloc.saveAudio();
-                  widget.textRecognizedBloc.noticeOpacity.add(1.0);
-                  Timer(Duration(seconds: 1),
-                      () => widget.textRecognizedBloc.noticeOpacity.add(0.0)); 
-                },
-              )
+                  GestureDetector(
+                    child: Container(
+                        margin: EdgeInsets.only(bottom: bottom),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Image.asset("assets/Download.png"),
+                            SizedBox(width: 5),
+                            Text("Save to file storage"),
+
+                          ],
+                        )),
+                    onTap: () {
+                      widget.textRecognizedBloc.saveAudio();
+                      widget.textRecognizedBloc.noticeOpacity.add(1.0);
+                      Timer(Duration(seconds: 1),
+                          () => widget.textRecognizedBloc.noticeOpacity.add(0.0));
+                    },
+                  ),
             ],
           ),
           Positioned(
@@ -176,6 +180,8 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                   widget.textRecognizedBloc) // Audio Save Notification
         ]));
   }
+
+
 
   void getVoices() async {
     final voices = await TextToSpeechAPI().getVoices();
