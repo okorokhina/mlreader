@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:audioplayer/audioplayer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:mlreader/core/blocs/bloc_provider.dart';
 import 'package:mlreader/core/models/text_recognize.dart';
 import 'package:mlreader/core/models/voice.dart';

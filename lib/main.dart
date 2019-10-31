@@ -20,12 +20,21 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    return MaterialApp(
+    return BlocProvider(bloc: TextRecognizedBloc(),
+    child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
             appBarTheme: AppBarTheme(color: Color(0xFF00B33A)),
             primaryColor: Color(0xFF00B33A)),
-        home: BlocProvider(
-            bloc: TextRecognizedBloc(), child: SplashView(cameras: cameras)));
+        home: Scaffold(body: SplashView(cameras: cameras)
+            )));
+    // BlocProvider(bloc: TextRecognizedBloc, child:
+    // MaterialApp(
+    //     title: 'Flutter Demo',
+    //     theme: ThemeData(
+    //         appBarTheme: AppBarTheme(color: Color(0xFF00B33A)),
+    //         primaryColor: Color(0xFF00B33A)),
+    //     home: Scaffold(body: SplashView(cameras: cameras)
+    //         )));
   }
 }

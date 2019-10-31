@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:audioplayer/audioplayer.dart';
 import 'package:flutter/material.dart';
 

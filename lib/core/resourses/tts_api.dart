@@ -24,7 +24,7 @@ class TextToSpeechAPI {
         .synthesizeText(text, voice.name, voice.languageCodes.first);
     bytes = Base64Decoder().convert(audioContent, 0, audioContent.length);
     final dir = await getTemporaryDirectory();
-    final audioFile = File('${dir.path}/wavenet.mp3');
+    final audioFile = File('${dir.path}/${_getTimestamp()}.mp3');
     await audioFile.writeAsBytes(bytes);
     return audioFile.path;
   }
