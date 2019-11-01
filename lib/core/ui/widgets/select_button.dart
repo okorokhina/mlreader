@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mlreader/core/ui/select_view.dart';
 
 class SelectButton extends StatelessWidget {
   final textRecognizedBloc;

@@ -43,6 +43,7 @@ class MLAudioPlayerState extends State<MLAudioPlayer>
         });
       } else if (s == AudioPlayerState.STOPPED) {
         setState(() {
+          playPauseController.forward();
           position = duration;
         });
       } else if (s == AudioPlayerState.COMPLETED) {
@@ -119,16 +120,11 @@ class MLAudioPlayerState extends State<MLAudioPlayer>
                           ? duration.inMilliseconds.toDouble()
                           : 0.0),
                 )),
-                IconButton(
-                  icon: Image.asset("assets/upload.png"),
-                  onPressed: () => widget.textRecognizedBloc.getAudioPackage(),
-                ),
               ],
             ),
           )
-        : IconButton(
-            icon: Image.asset("assets/upload.png"),
-            onPressed: () => widget.textRecognizedBloc.getAudioPackage(),
+        : Center(
+            child: CircularProgressIndicator(),
           );
   }
 

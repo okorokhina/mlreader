@@ -12,7 +12,7 @@ class Repository {
 
   getAudio() => _picker.openFileExplorer();
   getVoice(String locale) => ttsGoogle.getVoice(locale);
-  saveAudion() => ttsGoogle.saveAudion();
+  saveAudio() => ttsGoogle.saveAudio();
   writeAudioFile(String voiceText, Voice voice) => ttsGoogle.writeAudioFile(voiceText, voice);
 
   Future adsBanner() => ads.showBanner();

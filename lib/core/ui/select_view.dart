@@ -9,7 +9,6 @@ import 'package:mlreader/core/ui/widgets/internet_connection.dart';
 import 'package:mlreader/core/ui/widgets/notice.dart';
 import 'package:mlreader/core/ui/widgets/scan_button.dart';
 import 'package:mlreader/core/ui/widgets/select_button.dart';
-import 'package:file_picker/file_picker.dart';
 
 class SelectView extends StatefulWidget {
   SelectView({@required this.textRecognizedBloc});
@@ -26,6 +25,7 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
   List<Voice> _voices = [];
   Voice _selectedVoice;
   double bottom;
+  double bottomFolder;
 
   @override
   void initState() {
@@ -35,13 +35,12 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    Device.get().isIphoneX ? bottom = 100 : bottom = 65;
+    checkDevice();
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              widget.textRecognizedBloc.audio = null;
               widget.textRecognizedBloc.stop();
               Navigator.of(context).pop();
             },
@@ -77,14 +76,13 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                               widget.textRecognizedBloc.scanColor
                                   .add(Colors.white);
                               widget.textRecognizedBloc.selectColor.add(null);
-                              widget.textRecognizedBloc.audio = null;
                             },
                           ),
                           SelectButton(
                               textRecognizedBloc: widget.textRecognizedBloc,
                               onTap: () {
-                                widget.textRecognizedBloc.audioPlugin.stop();
                                 widget.textRecognizedBloc.audio = null;
+                                widget.textRecognizedBloc.audioPlugin.stop();
                                 widget.textRecognizedBloc.scanColor.add(null);
                                 widget.textRecognizedBloc.selectColor
                                     .add(Colors.white);
@@ -113,12 +111,13 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                       );
                     } else {
                       return Container(
-                        margin: EdgeInsets.only(top: 10, bottom: 10),
-                        decoration: BoxDecoration(
+                          margin: EdgeInsets.only(top: 10, bottom: 10),
+                          decoration: BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(8)),
                             image: DecorationImage(
-                                image:  AssetImage("assets/waves.png"),
-                      ),));
+                              image: AssetImage("assets/waves.png"),
+                            ),
+                          ));
                     }
                   },
                 ),
@@ -150,25 +149,36 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
               SizedBox(
                 height: 15,
               ),
-                  GestureDetector(
-                    child: Container(
-                        margin: EdgeInsets.only(bottom: bottom),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Image.asset("assets/Download.png"),
-                            SizedBox(width: 5),
-                            Text("Save to file storage"),
-
-                          ],
-                        )),
-                    onTap: () {
-                      widget.textRecognizedBloc.saveAudio();
-                      widget.textRecognizedBloc.noticeOpacity.add(1.0);
-                      Timer(Duration(seconds: 1),
-                          () => widget.textRecognizedBloc.noticeOpacity.add(0.0));
-                    },
-                  ),
+              Stack(children: <Widget>[
+                GestureDetector(
+                  child: Container(
+                      margin: EdgeInsets.only(bottom: bottom),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Image.asset("assets/Download.png"),
+                          SizedBox(width: 5),
+                          Text("Save to file storage"),
+                        ],
+                      )),
+                  onTap: () {
+                    widget.textRecognizedBloc.saveAudio();
+                    widget.textRecognizedBloc.noticeOpacity.add(1.0);
+                    Timer(Duration(seconds: 1),
+                        () => widget.textRecognizedBloc.noticeOpacity.add(0.0));
+                  },
+                ),
+                Positioned(
+                    right: 15,
+                    bottom: bottomFolder,
+                    child: IconButton(
+                        padding: EdgeInsets.all(10),
+                        icon: Image.asset("assets/upload.png"),
+                        onPressed: () {
+                          widget.textRecognizedBloc.audioPlugin.stop();
+                          widget.textRecognizedBloc.getAudioPackage();
+                        })),
+              ])
             ],
           ),
           Positioned(
@@ -181,8 +191,6 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
         ]));
   }
 
-
-
   void getVoices() async {
     final voices = await TextToSpeechAPI().getVoices();
     if (voices == null) return;
@@ -193,5 +201,15 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
           orElse: () => Voice('en-US-Wavenet-F', 'FEMALE', ['en-US']));
       _voices = voices;
     });
+  }
+
+  checkDevice() {
+    if (Device.get().isIphoneX) {
+      bottom = 100;
+      bottomFolder = 80;
+    } else {
+      bottom = 65;
+      bottomFolder = 48;
+    }
   }
 }

@@ -32,7 +32,7 @@ class TextRecognizedBloc extends BlocBase {
   String _getTimestamp() => DateTime.now().millisecondsSinceEpoch.toString();
   StringBuffer buffer = StringBuffer();
 
-  saveAudio() => rep.saveAudion();
+  saveAudio() => rep.saveAudio();
 
   // Create path in system for photo
 
@@ -47,6 +47,7 @@ class TextRecognizedBloc extends BlocBase {
     if (controller.value.isTakingPicture) {
       return null;
     }
+    audio = null;
     await controller.takePicture(filePath);
     recognizePhoto(filePath);
   }
@@ -55,9 +56,11 @@ class TextRecognizedBloc extends BlocBase {
 
   Future pickGallery() async {
     var tempStore = await ImagePicker.pickImage(source: ImageSource.gallery);
-    scanColor.add(null);
-    selectColor.add(Colors.white);
-    recognizePhoto(tempStore.path);
+    if (tempStore != null) {
+      scanColor.add(null);
+      selectColor.add(Colors.white);
+      recognizePhoto(tempStore.path);
+    }
   }
 
   /* Rotate the image if it is not in the correct position,
@@ -93,13 +96,17 @@ class TextRecognizedBloc extends BlocBase {
   }
 
   getAudioPackage() async {
-    audio = "audio";
-    await audioPlugin.play( await rep.getAudio(), isLocal: true);
-
+    String audioFile = await rep.getAudio();
+    if (audioFile != null) {
+      audio = null;
+      audio = audioFile;
+      photo.add(null);
+      await audioPlugin.play(audioFile, isLocal: true);
+    }
   }
 
   writeAudio(voice) async {
-    if(buffer != null)
+    if (buffer != null)
       audio = await rep.writeAudioFile(buffer.toString(), voice);
     audioPlugin.play(audio, isLocal: true);
   }
@@ -126,6 +133,7 @@ class TextRecognizedBloc extends BlocBase {
     await audioPlugin.seek(percentForward);
   }
 
+  // Track position of the audio file after clicking on the slider
   Future<void> audioPosition(double position) async {
     await audioPlugin.seek(position / 1000);
   }
