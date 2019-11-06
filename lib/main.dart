@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
     return BlocProvider(
         bloc: TextRecognizedBloc(),
         child: MaterialApp(
+          debugShowCheckedModeBanner: false,
             title: 'Flutter Demo',
             theme: ThemeData(
                 appBarTheme: AppBarTheme(color: Color(0xFF00B33A)),

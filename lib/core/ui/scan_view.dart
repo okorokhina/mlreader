@@ -3,7 +3,6 @@ import 'package:mlreader/core/blocs/ads_bloc.dart';
 import 'package:mlreader/core/blocs/bloc_text_recognized.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
-import 'package:mlreader/core/ui/select_view.dart';
 import 'package:mlreader/core/ui/widgets/internet_connection.dart';
 import 'package:mlreader/core/ui/widgets/photo_button.dart';
 import 'package:mlreader/core/ui/widgets/scan_button.dart';
@@ -30,6 +29,8 @@ class TextRecognizedState extends State<TextRecognized> {
   void initState() {
     super.initState();
     adsBloc.adsBanner();
+    textRecognizedBloc.scanColor.add(Colors.white);
+    textRecognizedBloc.selectColor.add(null);
 
     // Initialize the first phone camera
     controller = CameraController(widget.cameras[0], ResolutionPreset.medium);
@@ -49,9 +50,7 @@ class TextRecognizedState extends State<TextRecognized> {
 
   @override
   Widget build(BuildContext context) {
-    Device.get().isIphoneX ? bottom = 110 : bottom = 70;
-    textRecognizedBloc.scanColor.add(Colors.white);
-    textRecognizedBloc.selectColor.add(null);
+    Device.get().isIphoneX ? bottom = 110 : bottom = 80;
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -83,17 +82,12 @@ class TextRecognizedState extends State<TextRecognized> {
                               }),
                           SelectButton(
                               textRecognizedBloc: textRecognizedBloc,
-                              onTap: () {
+                              onTap: () async {
                                 textRecognizedBloc.scanColor.add(null);
                                 textRecognizedBloc.selectColor
                                     .add(Colors.white);
-                                textRecognizedBloc.pickGallery();
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => SelectView(
-                                            textRecognizedBloc:
-                                                textRecognizedBloc)));
+                                textRecognizedBloc.pickGallery(
+                                    context, textRecognizedBloc, true);
                               })
                         ]),
                   ))),

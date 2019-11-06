@@ -29,8 +29,8 @@ class Ads {
      BannerAd.testAdUnitId,
       // TODO: Release version ADS
       //  Platform.isAndroid
-      //    ? bannerAndroidId
-      //    : banneriOSId,
+        //  ? bannerAndroidId
+        //  : banneriOSId,
       size: AdSize.banner,
       listener: (MobileAdEvent event) {
         print('BannerAd event $event');

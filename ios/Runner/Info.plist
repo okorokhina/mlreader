@@ -36,7 +36,7 @@
 	<key>NSAppleMusicUsageDescription</key>
 	<string>Can I use the Music please?</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Can I use the camera please?</string>
+	<string>The camera is used to create photo text and its further recognition</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>I need this information for language recognition</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
@@ -44,7 +44,7 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Can I use the mic please?</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Can I use the PhotoLibrary please?</string>
+	<string>A photo library is used to add photos for text recognition</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

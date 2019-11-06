@@ -38,13 +38,7 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
     checkDevice();
     return Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              widget.textRecognizedBloc.stop();
-              Navigator.of(context).pop();
-            },
-          ),
+          automaticallyImplyLeading: false,
           centerTitle: true,
           elevation: 0.0,
           title: Text(
@@ -81,18 +75,12 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
                           SelectButton(
                               textRecognizedBloc: widget.textRecognizedBloc,
                               onTap: () {
-                                widget.textRecognizedBloc.audio = null;
-                                widget.textRecognizedBloc.audioPlugin.stop();
+                                widget.textRecognizedBloc.audioPlugin.pause();
                                 widget.textRecognizedBloc.scanColor.add(null);
                                 widget.textRecognizedBloc.selectColor
                                     .add(Colors.white);
-                                widget.textRecognizedBloc.pickGallery();
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => SelectView(
-                                            textRecognizedBloc:
-                                                widget.textRecognizedBloc)));
+                                widget.textRecognizedBloc.pickGallery(
+                                    context, widget.textRecognizedBloc, false);
                               })
                         ]),
                   ))),
@@ -205,11 +193,11 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
 
   checkDevice() {
     if (Device.get().isIphoneX) {
-      bottom = 100;
-      bottomFolder = 80;
+      bottom = 110;
+      bottomFolder = 92;
     } else {
-      bottom = 65;
-      bottomFolder = 48;
+      bottom = 80;
+      bottomFolder = 63;
     }
   }
 }

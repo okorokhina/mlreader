@@ -29,7 +29,6 @@ class TextToSpeechAPI {
     return audioFile.path;
   }
 
-
   // Create a path audio for iOS and Android platforms and save audio file
   saveAudio() async {
     String dirPath;

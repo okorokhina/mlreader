@@ -6,6 +6,7 @@ import 'package:mlreader/core/blocs/bloc_provider.dart';
 import 'package:mlreader/core/models/text_recognize.dart';
 import 'package:mlreader/core/models/voice.dart';
 import 'package:mlreader/core/resourses/repository.dart';
+import 'package:mlreader/core/ui/select_view.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:image_picker/image_picker.dart';
@@ -21,6 +22,7 @@ class TextRecognizedBloc extends BlocBase {
   final selectColor = BehaviorSubject();
   final internetConnect = BehaviorSubject();
   final noticeOpacity = BehaviorSubject();
+  final audioString = BehaviorSubject();
 
   Observable get outDetectedText => detectedText.stream;
   Observable get outPhoto => photo.stream;
@@ -28,6 +30,7 @@ class TextRecognizedBloc extends BlocBase {
   Observable get outSelectColor => selectColor.stream;
   Observable get outInternetConnect => internetConnect.stream;
   Observable get outNotisOpacity => noticeOpacity.stream;
+  Observable get outAudioString => audioString.stream;
 
   String _getTimestamp() => DateTime.now().millisecondsSinceEpoch.toString();
   StringBuffer buffer = StringBuffer();
@@ -47,18 +50,27 @@ class TextRecognizedBloc extends BlocBase {
     if (controller.value.isTakingPicture) {
       return null;
     }
-    audio = null;
+    audioString.add(null);
     await controller.takePicture(filePath);
     recognizePhoto(filePath);
   }
 
   // Select an image from the gallery, change color in scan and select buttons
 
-  Future pickGallery() async {
-    var tempStore = await ImagePicker.pickImage(source: ImageSource.gallery);
+  Future pickGallery(context, textRecognizedBloc, scanView) async {
+    File tempStore = await ImagePicker.pickImage(source: ImageSource.gallery);
     if (tempStore != null) {
       scanColor.add(null);
       selectColor.add(Colors.white);
+      scanView
+          ? Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      SelectView(textRecognizedBloc: textRecognizedBloc)))
+          : null;
+      audioString.add(null);
+      stop();
       recognizePhoto(tempStore.path);
     }
   }
@@ -108,6 +120,7 @@ class TextRecognizedBloc extends BlocBase {
   writeAudio(voice) async {
     if (buffer != null)
       audio = await rep.writeAudioFile(buffer.toString(), voice);
+    audioString.add(audio);
     audioPlugin.play(audio, isLocal: true);
   }
 
@@ -145,5 +158,6 @@ class TextRecognizedBloc extends BlocBase {
     selectColor.close();
     internetConnect.close();
     noticeOpacity.close();
+    audioString.close();
   }
 }

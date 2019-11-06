@@ -48,6 +48,10 @@ class MLAudioPlayerState extends State<MLAudioPlayer>
         });
       } else if (s == AudioPlayerState.COMPLETED) {
         playPauseController.forward();
+        play = !play;
+      } else if (s == AudioPlayerState.PAUSED) {
+        playPauseController.forward();
+        play = !play;
       }
     });
     super.initState();
@@ -62,8 +66,11 @@ class MLAudioPlayerState extends State<MLAudioPlayer>
 
   @override
   Widget build(BuildContext context) {
-    return widget.textRecognizedBloc.audio != null
-        ? Container(
+    return StreamBuilder(
+      stream: widget.textRecognizedBloc.outAudioString,
+      builder: (context, snapshot) {
+        if (snapshot.data != null) {
+          return Container(
             margin: EdgeInsets.only(left: 40, right: 40),
             child: Column(
               children: <Widget>[
@@ -122,10 +129,14 @@ class MLAudioPlayerState extends State<MLAudioPlayer>
                 )),
               ],
             ),
-          )
-        : Center(
+          );
+        } else {
+          return Center(
             child: CircularProgressIndicator(),
           );
+        }
+      },
+    );
   }
 
   // Change buttons Play and Pause
