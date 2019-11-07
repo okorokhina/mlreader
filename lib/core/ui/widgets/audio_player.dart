@@ -51,7 +51,7 @@ class MLAudioPlayerState extends State<MLAudioPlayer>
         play = !play;
       } else if (s == AudioPlayerState.PAUSED) {
         playPauseController.forward();
-        play = !play;
+        play = true;
       }
     });
     super.initState();

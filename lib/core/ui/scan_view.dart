@@ -3,6 +3,7 @@ import 'package:imagetospeech/core/blocs/ads_bloc.dart';
 import 'package:imagetospeech/core/blocs/bloc_text_recognized.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
+import 'package:mlreader/core/ui/select_view.dart';
 import 'package:imagetospeech/core/ui/widgets/internet_connection.dart';
 import 'package:imagetospeech/core/ui/widgets/photo_button.dart';
 import 'package:imagetospeech/core/ui/widgets/scan_button.dart';
@@ -77,12 +78,18 @@ class TextRecognizedState extends State<TextRecognized> {
                           ScanButton(
                               textRecognizedBloc: textRecognizedBloc,
                               onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SelectView(
+                                            textRecognizedBloc:
+                                                textRecognizedBloc)));
                                 textRecognizedBloc.scanColor.add(Colors.white);
                                 textRecognizedBloc.selectColor.add(null);
                               }),
                           SelectButton(
                               textRecognizedBloc: textRecognizedBloc,
-                              onTap: () async {
+                              onTap: () {
                                 textRecognizedBloc.scanColor.add(null);
                                 textRecognizedBloc.selectColor
                                     .add(Colors.white);

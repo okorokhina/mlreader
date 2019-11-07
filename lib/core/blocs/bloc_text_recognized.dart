@@ -113,7 +113,8 @@ class TextRecognizedBloc extends BlocBase {
       audio = null;
       audio = audioFile;
       photo.add(null);
-      await audioPlugin.play(audioFile, isLocal: true);}
+      await audioPlugin.play(audioFile, isLocal: true);
+    }
   }
 
   writeAudio(voice) async {
