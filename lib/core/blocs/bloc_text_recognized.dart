@@ -44,7 +44,7 @@ class TextRecognizedBloc extends BlocBase {
       return null;
     }
     final Directory textDir = await getApplicationDocumentsDirectory();
-    final String dirPath = '${textDir.path}/Pictures/flutter_camera';
+    final String dirPath = '${textDir.path}/Pictures/camera';
     await Directory(dirPath).create(recursive: true);
     final String filePath = '$dirPath/${_getTimestamp()}.jpg';
     if (controller.value.isTakingPicture) {

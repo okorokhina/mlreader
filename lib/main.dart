@@ -24,7 +24,6 @@ class MyApp extends StatelessWidget {
         bloc: TextRecognizedBloc(),
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-            title: 'Flutter Demo',
             theme: ThemeData(
                 appBarTheme: AppBarTheme(color: Color(0xFF00B33A)),
                 primaryColor: Color(0xFF00B33A)),
