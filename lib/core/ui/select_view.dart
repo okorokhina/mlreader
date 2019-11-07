@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
-import 'package:mlreader/core/models/voice.dart';
-import 'package:mlreader/core/resourses/tts_api.dart';
-import 'package:mlreader/core/ui/widgets/audio_player.dart';
-import 'package:mlreader/core/ui/widgets/internet_connection.dart';
-import 'package:mlreader/core/ui/widgets/notice.dart';
-import 'package:mlreader/core/ui/widgets/scan_button.dart';
-import 'package:mlreader/core/ui/widgets/select_button.dart';
+import 'package:imagetospeech/core/models/voice.dart';
+import 'package:imagetospeech/core/resourses/tts_api.dart';
+import 'package:imagetospeech/core/ui/widgets/audio_player.dart';
+import 'package:imagetospeech/core/ui/widgets/internet_connection.dart';
+import 'package:imagetospeech/core/ui/widgets/notice.dart';
+import 'package:imagetospeech/core/ui/widgets/scan_button.dart';
+import 'package:imagetospeech/core/ui/widgets/select_button.dart';
 
 class SelectView extends StatefulWidget {
   SelectView({@required this.textRecognizedBloc});
@@ -42,7 +42,7 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
           centerTitle: true,
           elevation: 0.0,
           title: Text(
-            "ML Reader",
+            "Image to Speech",
           ),
         ),
         body: Stack(children: <Widget>[
@@ -183,10 +183,10 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
     final voices = await TextToSpeechAPI().getVoices();
     if (voices == null) return;
     setState(() {
-      _selectedVoice = voices.firstWhere(
-          (e) =>
-              e.name == 'en-US-Wavenet-F' && e.languageCodes.first == 'en-US',
-          orElse: () => Voice('en-US-Wavenet-F', 'FEMALE', ['en-US']));
+//      _selectedVoice = voices.firstWhere(
+//          (e) =>
+//              e.name == 'en-US-Wavenet-F' && e.languageCodes.first == 'en-US',
+//          orElse: () => Voice('en-US-Wavenet-F', 'FEMALE', ['en-US']));
       _voices = voices;
     });
   }

@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:audioplayer/audioplayer.dart';
 import 'package:flutter/material.dart';
-import 'package:mlreader/core/blocs/bloc_provider.dart';
-import 'package:mlreader/core/models/text_recognize.dart';
-import 'package:mlreader/core/models/voice.dart';
-import 'package:mlreader/core/resourses/repository.dart';
-import 'package:mlreader/core/ui/select_view.dart';
+import 'package:imagetospeech/core/blocs/bloc_provider.dart';
+import 'package:imagetospeech/core/models/text_recognize.dart';
+import 'package:imagetospeech/core/models/voice.dart';
+import 'package:imagetospeech/core/resourses/repository.dart';
+import 'package:imagetospeech/core/ui/select_view.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:image_picker/image_picker.dart';
@@ -44,7 +44,7 @@ class TextRecognizedBloc extends BlocBase {
       return null;
     }
     final Directory textDir = await getApplicationDocumentsDirectory();
-    final String dirPath = '${textDir.path}/Pictures/flutter_camera';
+    final String dirPath = '${textDir.path}/Pictures';
     await Directory(dirPath).create(recursive: true);
     final String filePath = '$dirPath/${_getTimestamp()}.jpg';
     if (controller.value.isTakingPicture) {
@@ -113,15 +113,15 @@ class TextRecognizedBloc extends BlocBase {
       audio = null;
       audio = audioFile;
       photo.add(null);
-      await audioPlugin.play(audioFile, isLocal: true);
-    }
+      await audioPlugin.play(audioFile, isLocal: true);}
   }
 
   writeAudio(voice) async {
     if (buffer != null)
       audio = await rep.writeAudioFile(buffer.toString(), voice);
+    stop();
     audioString.add(audio);
-    audioPlugin.play(audio, isLocal: true);
+    await audioPlugin.play(audio, isLocal: true);
   }
 
   Future<void> play() async {

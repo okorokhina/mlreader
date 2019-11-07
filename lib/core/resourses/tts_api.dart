@@ -2,13 +2,13 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:convert' show Base64Decoder, json, utf8;
 
-import 'package:mlreader/core/models/voice.dart';
+import 'package:imagetospeech/core/models/voice.dart';
 import 'package:path_provider/path_provider.dart';
 
 class TextToSpeechAPI {
   static final TextToSpeechAPI _singleton = TextToSpeechAPI._internal();
   final _httpClient = HttpClient();
-  static const _apiKey = "Your Api Key";
+  static const _apiKey = "AIzaSyDO0ew9TxAXw1fTzfYioUuP-IYLj2iiqcA";
   static const _apiURL = "texttospeech.googleapis.com";
   static const _speakingRate = 0.8;
   String _getTimestamp() => DateTime.now().millisecondsSinceEpoch.toString();
@@ -46,7 +46,6 @@ class TextToSpeechAPI {
 
   Future<dynamic> synthesizeText(
       String text, String name, String languageCode) async {
-    print("text $text\n name $name \n langCode $languageCode");
     try {
       final uri = Uri.https(_apiURL, '/v1beta1/text:synthesize');
       final Map json = {
@@ -54,7 +53,6 @@ class TextToSpeechAPI {
         'voice': {'name': name, 'languageCode': languageCode},
         'audioConfig': {'audioEncoding': 'MP3', "speakingRate": _speakingRate}
       };
-
       final jsonResponse = await _postJson(uri, json);
       if (jsonResponse == null) return null;
       final String audioContent = await jsonResponse['audioContent'];

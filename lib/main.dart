@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mlreader/core/blocs/bloc_provider.dart';
-import 'package:mlreader/core/blocs/bloc_text_recognized.dart';
+import 'package:imagetospeech/core/blocs/bloc_provider.dart';
+import 'package:imagetospeech/core/blocs/bloc_text_recognized.dart';
 import 'package:camera/camera.dart';
-import 'package:mlreader/core/ui/splash_view.dart';
+import 'package:imagetospeech/core/ui/splash_view.dart';
 
 List<CameraDescription> cameras;
 
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         bloc: TextRecognizedBloc(),
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-            title: 'Flutter Demo',
+            title: 'Image to Speech',
             theme: ThemeData(
                 appBarTheme: AppBarTheme(color: Color(0xFF00B33A)),
                 primaryColor: Color(0xFF00B33A)),

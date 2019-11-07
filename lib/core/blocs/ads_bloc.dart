@@ -1,5 +1,5 @@
 
-import 'package:mlreader/core/resourses/repository.dart';
+import 'package:imagetospeech/core/resourses/repository.dart';
 
 class AdsBloc{
 

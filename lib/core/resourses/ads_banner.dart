@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_admob/firebase_admob.dart';
 import 'dart:io';
 
@@ -25,12 +27,10 @@ class Ads {
    
   BannerAd createBannerAd() {
     return BannerAd(
-      adUnitId: 
-     BannerAd.testAdUnitId,
-      // TODO: Release version ADS
-      //  Platform.isAndroid
-        //  ? bannerAndroidId
-        //  : banneriOSId,
+      adUnitId:
+        Platform.isAndroid
+          ? bannerAndroidId
+          : banneriOSId,
       size: AdSize.banner,
       listener: (MobileAdEvent event) {
         print('BannerAd event $event');

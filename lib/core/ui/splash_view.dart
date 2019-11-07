@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:mlreader/core/ui/scan_view.dart';
+import 'package:imagetospeech/core/ui/scan_view.dart';
 
 class SplashView extends StatefulWidget {
   SplashView({@required this.cameras});

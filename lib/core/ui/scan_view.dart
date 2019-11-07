@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:mlreader/core/blocs/ads_bloc.dart';
-import 'package:mlreader/core/blocs/bloc_text_recognized.dart';
+import 'package:imagetospeech/core/blocs/ads_bloc.dart';
+import 'package:imagetospeech/core/blocs/bloc_text_recognized.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
-import 'package:mlreader/core/ui/widgets/internet_connection.dart';
-import 'package:mlreader/core/ui/widgets/photo_button.dart';
-import 'package:mlreader/core/ui/widgets/scan_button.dart';
-import 'package:mlreader/core/ui/widgets/select_button.dart';
+import 'package:imagetospeech/core/ui/widgets/internet_connection.dart';
+import 'package:imagetospeech/core/ui/widgets/photo_button.dart';
+import 'package:imagetospeech/core/ui/widgets/scan_button.dart';
+import 'package:imagetospeech/core/ui/widgets/select_button.dart';
 
 class TextRecognized extends StatefulWidget {
   TextRecognized({@required this.cameras});
@@ -55,7 +55,7 @@ class TextRecognizedState extends State<TextRecognized> {
         appBar: AppBar(
           centerTitle: true,
           elevation: 0.0,
-          title: Text("ML Reader"),
+          title: Text("Image to Speech"),
         ),
         body: Stack(children: <Widget>[
           Column(
@@ -71,7 +71,7 @@ class TextRecognizedState extends State<TextRecognized> {
                         borderRadius: BorderRadius.all(Radius.circular(5)),
                         border: Border.all(color: Colors.white)),
                     margin: EdgeInsets.only(left: 8, right: 8),
-                    child: Row(
+                        child: Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
                           ScanButton(

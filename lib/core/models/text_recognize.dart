@@ -33,6 +33,7 @@ class TextAnnotations {
   TextAnnotations({this.locale, this.description, this.boundingPoly});
 
   factory TextAnnotations.fromJson(Map<String, dynamic> parsedJson) {
+
     return TextAnnotations(
         locale: parsedJson["locale"],
         description: parsedJson["description"],
