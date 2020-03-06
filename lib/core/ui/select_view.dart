@@ -42,7 +42,7 @@ class SelectViewState extends State<SelectView> with TickerProviderStateMixin {
           centerTitle: true,
           elevation: 0.0,
           title: Text(
-            "ML Reader",
+            "Image To Speech",
           ),
         ),
         body: Stack(children: <Widget>[

@@ -37,7 +37,7 @@ class SplashViewState extends State<SplashView>
         appBar: AppBar(
           centerTitle: true,
           elevation: 0.0,
-          title: Text("ML Reader"),
+          title: Text("Image To Speech"),
         ),
         body: Column(
           children: <Widget>[

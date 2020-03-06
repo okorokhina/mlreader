@@ -56,7 +56,7 @@ class TextRecognizedState extends State<TextRecognized> {
         appBar: AppBar(
           centerTitle: true,
           elevation: 0.0,
-          title: Text("ML Reader"),
+          title: Text("Image To Speech"),
         ),
         body: Stack(children: <Widget>[
           Column(

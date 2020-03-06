@@ -26,11 +26,11 @@ class Ads {
   BannerAd createBannerAd() {
     return BannerAd(
       adUnitId: 
-     BannerAd.testAdUnitId,
+    //  BannerAd.testAdUnitId,
       // TODO: Release version ADS
-      //  Platform.isAndroid
-        //  ? bannerAndroidId
-        //  : banneriOSId,
+       Platform.isAndroid
+         ? bannerAndroidId
+         : banneriOSId,
       size: AdSize.banner,
       listener: (MobileAdEvent event) {
         print('BannerAd event $event');
